@@ -155,6 +155,7 @@ woman une femme"></textarea>
     <div id="navigation-buttons" style="display: none;">
         <button id="prev-button" class="btn btn-secondary">Previous</button>
         <button id="next-button" class="btn btn-secondary">Next</button>
+        <button id="shuffle-button" class="btn btn-secondary">Shuffle</button>
         <button id="edit-button" class="btn btn-secondary">Edit List</button>
     </div>
 
@@ -179,6 +180,7 @@ woman une femme"></textarea>
         const navigationButtons = $("#navigation-buttons");
         const prevButton = $("#prev-button");
         const nextButton = $("#next-button");
+        const shuffleButton = $("#shuffle-button");
         const editButton = $("#edit-button");
         const errorMessage = $("#error-message");
         let slides = [];
@@ -275,13 +277,23 @@ woman une femme"></textarea>
             wordListTextarea.val(localStorage.getItem(localStorageKey));
         }
 
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+
         function generateSlideshow(wordList) {
             slideshowContainer.empty(); // Clear any existing slides
             slides = []; // Reset the slides array
             currentSlideIndex = 0;
             errorMessage.text("");  // Clear any previous errors
 
-            const lines = wordList.split('\n');
+            let lines = wordList.split('\n');
+            shuffleArray(lines); // Shuffle the array of lines
+
             let validWordsCount = 0;
 
             lines.forEach(line => {
@@ -384,6 +396,11 @@ woman une femme"></textarea>
 
         nextButton.click(function () {
             showSlide(currentSlideIndex + 1);
+        });
+
+         shuffleButton.click(function () {
+            const wordList = wordListTextarea.val();
+            generateSlideshow(wordList);
         });
 
         editButton.click(function () {
