@@ -758,15 +758,15 @@ woman une femme"></textarea>
                     return;
                 }
 
-                showSlide(0); // Show the first slide
+                // Save word list to local storage
+                setLocalStorageItem(config.localStorageKey, wordList);
+
+                showSlide(0); // Show the first slide - NOW IN THE CORRECT PLACE!
                 dom.inputArea.hide();
                 dom.generateButton.hide();
                 dom.slideshowContainer.show();
                 dom.navigationButtons.show();
                 dom.guessableRulesDiv.show(); // Show the rules div
-
-                // Save word list to local storage
-                setLocalStorageItem(config.localStorageKey, wordList);
             }
 
             // ------------------------------------------------------------------------
