@@ -778,15 +778,11 @@ woman une femme"></textarea>
                 const currentSlide = slides[currentSlideIndex];
                 currentSlide.addClass("active");
 
-                // Load image when slide becomes active
+                // Load image when slide becomes active, but only if the english word has been revealed
                 const englishWordSpan = currentSlide.find(".english-word");
-                if (!englishWordSpan.data("revealed")) {
-                    //if the english word is not visible, do not load the image
-                    return;
+                if (!englishWordSpan.hasClass("hidden")) {
+                    loadImageForSlide(currentSlide);
                 }
-                loadImageForSlide(currentSlide);
-
-
             }
 
             // ------------------------------------------------------------------------
