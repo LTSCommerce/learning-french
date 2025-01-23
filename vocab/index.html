@@ -103,6 +103,78 @@
             margin-bottom: 10px;
         }
 
+        #word-list {
+            height: 200px; /* Fixed height for the textarea */
+        }
+
+        #slideshow-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            height: 350px; /* Increased height to accommodate buttons */
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 1.7em;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* Gender-based color schemes */
+        .slide.masculine {
+            background: linear-gradient(to bottom, #64b5f6, #2196f3); /* Blueish */
+        }
+
+        .slide.feminine {
+            background: linear-gradient(to bottom, #f48fb1, #e91e63); /* Pinkish */
+        }
+
+        .slide.neutral {
+            background: linear-gradient(to bottom, #a1887f, #795548); /* Brownish */
+        }
+
+        #navigation-buttons {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        #error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        #edit-button {
+            margin-top: 10px;
+        }
+
+        .english-word {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        #load-list-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
         #guessable-rules {
             margin-top: 20px;
             padding: 15px;
