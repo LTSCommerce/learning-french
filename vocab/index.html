@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>French Word Slideshow Generator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+#container {
+    width: 80%;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#input-area {
+    margin-bottom: 20px;
+}
+
+#slideshow-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    height: 300px; /* Fixed height for consistent layout */
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 2em;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+/* Gender-based color schemes */
+.slide.masculine {
+    background: linear-gradient(to bottom, #64b5f6, #2196f3); /* Blueish */
+}
+
+.slide.feminine {
+    background: linear-gradient(to bottom, #f48fb1, #e91e63); /* Pinkish */
+}
+
+.slide.neutral {
+    background: linear-gradient(to bottom, #a1887f, #795548); /* Brownish */
+}
+
+#navigation-buttons {
+    text-align: center;
+    margin-top: 10px;
+}
+
+#error-message {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* API Key Input */
+#api-key-area {
+    margin-bottom: 20px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+    <h1>French Word Slideshow Generator</h1>
+
+    <div id="api-key-area">
+        <label for="google-api-key">Google Translate API Key (Optional):</label>
+        <input type="text" id="google-api-key" class="form-control" placeholder="Enter API key (for future use)">
+        <small class="form-text text-muted">
+            Enter your Google Translate API key here.
+            <a href="https://cloud.google.com/translate/docs/setup" target="_blank">How to get an API Key</a>
+        </small>
+    </div>
+
+    <div id="input-area">
+        <label for="word-list">Enter French words with gender prefix (one per line):</label>
+        <textarea id="word-list" class="form-control" rows="5"
+                  placeholder="Example:
+le chien
+la table
+l'arbre"></textarea>
+    </div>
+
+    <button id="generate-button" class="btn btn-primary btn-block">Generate Slideshow</button>
+
+    <div id="slideshow-container">
+        <!-- Slides will be dynamically added here -->
+    </div>
+
+    <div id="navigation-buttons">
+        <button id="prev-button" class="btn btn-secondary">Previous</button>
+        <button id="next-button" class="btn btn-secondary">Next</button>
+    </div>
+
+    <div id="error-message">
+        <!-- Error messages will be displayed here -->
+    </div>
+</div>
+
+<script>
+$(document).ready(function () {
+    const slideshowContainer = $("#slideshow-container");
+    const prevButton = $("#prev-button");
+    const nextButton = $("#next-button");
+    const errorMessage = $("#error-message");
+    let slides = [];
+    let currentSlideIndex = 0;
+
+    function generateSlideshow(wordList) {
+        slideshowContainer.empty(); // Clear any existing slides
+        slides = []; // Reset the slides array
+        currentSlideIndex = 0;
+        errorMessage.text("");  // Clear any previous errors
+
+        const lines = wordList.split('\n');
+        let validWordsCount = 0;
+
+        lines.forEach(line => {
+            line = line.trim();
+            if (!line) return; // Skip empty lines
+
+            const parts = line.split(' ');
+            if (parts.length < 2) {
+                console.warn("Invalid line format: ", line);
+                errorMessage.text("Invalid line format. Please use 'prefix word'. See console for more.");
+                return;
+            }
+
+            const prefix = parts[0].toLowerCase();
+            const word = parts.slice(1).join(' ');
+
+            const validPrefixes = ["le", "la", "l'", "un", "une", "ce", "cet", "cette", "du", "de la", "des"];
+            if (!validPrefixes.includes(prefix)) {
+                console.warn("Invalid prefix: ", prefix, " in line: ", line);
+                errorMessage.text("Invalid gender prefix.  Valid prefixes are: le, la, l', un, une, ce, cet, cette, du, de la, des. See console for more.");
+                return;
+            }
+
+            let genderClass = 'neutral';
+            if (["le", "un", "ce", "cet", "du", "des"].includes(prefix)) {
+                genderClass = 'masculine';
+            } else if (["la", "une", "cette", "de la"].includes(prefix)) {
+                genderClass = 'feminine';
+            }
+
+            const definiteArticle = (prefix === "un" || prefix === "une") ? "" : prefix;
+            const possessiveArticle = (genderClass === 'masculine') ? "son" : "ta";
+            const wordWithDefiniteArticle = definiteArticle + " " + word;
+            const wordWithOne = (genderClass === 'masculine') ? "un " + word : "une " + word;
+            const wordWithPossessive = possessiveArticle + " " + word;
+
+            const slideContent = `
+                <p>Un/Une: ${wordWithOne}</p>
+                <p>Le/La/L': ${wordWithDefiniteArticle}</p>
+                <p>Ta/Sa: ${wordWithPossessive}</p>
+            `;
+
+            const slide = $(`<div class="slide ${genderClass}">${slideContent}</div>`);
+            slideshowContainer.append(slide);
+            slides.push(slide);
+            validWordsCount++;
+        });
+
+        if (validWordsCount === 0) {
+            errorMessage.text("No valid words found in the input.");
+            return;
+        }
+
+        showSlide(0); // Show the first slide
+    }
+
+    function showSlide(index) {
+        if (index < 0) {
+            currentSlideIndex = slides.length - 1;
+        } else if (index >= slides.length) {
+            currentSlideIndex = 0;
+        } else {
+            currentSlideIndex = index;
+        }
+
+        $(".slide").removeClass("active");
+        slides[currentSlideIndex].addClass("active");
+    }
+
+    $("#generate-button").click(function () {
+        const wordList = $("#word-list").val();
+        generateSlideshow(wordList);
+    });
+
+    prevButton.click(function () {
+        showSlide(currentSlideIndex - 1);
+    });
+
+    nextButton.click(function () {
+        showSlide(currentSlideIndex + 1);
+    });
+});
+</script>
+
+</body>
+</html>
