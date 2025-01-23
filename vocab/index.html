@@ -103,78 +103,6 @@
             margin-bottom: 10px;
         }
 
-        #word-list {
-            height: 200px; /* Fixed height for the textarea */
-        }
-
-        #slideshow-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-            height: 350px; /* Increased height to accommodate buttons */
-        }
-
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 1.7em;
-            color: white;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .slide.active {
-            opacity: 1;
-        }
-
-        /* Gender-based color schemes */
-        .slide.masculine {
-            background: linear-gradient(to bottom, #64b5f6, #2196f3); /* Blueish */
-        }
-
-        .slide.feminine {
-            background: linear-gradient(to bottom, #f48fb1, #e91e63); /* Pinkish */
-        }
-
-        .slide.neutral {
-            background: linear-gradient(to bottom, #a1887f, #795548); /* Brownish */
-        }
-
-        #navigation-buttons {
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        #error-message {
-            color: red;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        #edit-button {
-            margin-top: 10px;
-        }
-
-        .english-word {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-
-        #load-list-area {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
         #guessable-rules {
             margin-top: 20px;
             padding: 15px;
@@ -199,16 +127,18 @@
 
         .slide-buttons a {
             display: inline-block;
-            padding: 8px 12px;
-            margin: 0 5px;
-            background-color: #007bff;
-            color: white;
+            padding: 6px 10px; /* Reduced padding */
+            margin: 0 3px; /* Reduced margin */
+            background-color: #ddd; /* Light gray background */
+            color: #333; /* Dark gray text */
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 4px; /* Slightly smaller border radius */
+            font-size: 0.9em; /* Smaller font size */
+            border: none; /* Removed border */
         }
 
         .slide-buttons a:hover {
-            background-color: #0056b3;
+            background-color: #ccc; /* Slightly darker gray on hover */
         }
 
     </style>
@@ -339,7 +269,7 @@ woman une femme"></textarea>
                         const parts = line.split(' ');
                         if (parts.length < 3) {
                             console.warn("Invalid line format: ", line);
-                            errorMessage.text("Invalid line format in file. Please use 'english prefix french'. See console for more.");
+                            errorMessage.text("Invalid line format. Please use 'english prefix french'. See console for more.");
                             return;
                         }
 
@@ -453,6 +383,7 @@ woman une femme"></textarea>
                 // Construct the URLs - put the construction inside the loop so it's not overwritten
                 const googleTranslateURL = `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate`;
                 const wordReferenceURL = `https://www.wordreference.com/fren/${encodeURIComponent(frenchWord)}`;
+                const forvoURL = `https://forvo.com/word/${encodeURIComponent(frenchWord)}/#fr`;
 
                 const slideContent = `
                     <p class="english-word"><b>${englishWord}</b></p>
@@ -463,6 +394,7 @@ woman une femme"></textarea>
                     <div class="slide-buttons">
                         <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
                         <a href="${wordReferenceURL}" target="_blank">WordReference</a>
+                        <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
                     </div>
                 `;
 
