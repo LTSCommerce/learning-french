@@ -50,8 +50,7 @@
             position: relative;
             overflow: hidden;
             border-radius: 10px;
-            height: 450px;
-            /* Increased height to accommodate image */
+            /* Remove fixed height */
             display: none;
         }
 
@@ -62,10 +61,15 @@
             width: 100%;
             height: 100%;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            /* Use flexbox to position image and text */
+            flex-direction: row;
+            /* Arrange items in a row */
+            justify-content: space-between;
+            /* Distribute space evenly */
             align-items: center;
-            text-align: center;
+            /* Align items vertically */
+            padding: 20px;
+            /* Add some padding */
             color: white;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
@@ -108,6 +112,7 @@
             font-weight: bold;
             cursor: pointer;
             /* Indicate it's clickable */
+            user-select: none; /* Prevent text selection during double click */
         }
 
         .english-word.hidden {
@@ -181,24 +186,33 @@
         /* Image Styles */
         .pixabay-image {
             max-width: 80%;
-            max-height: 200px;
+            max-height: 300px;
             object-fit: contain;
-            margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
         .image-placeholder {
-            width: 80%;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             background-color: #eee;
             border: 1px dashed #999;
             color: #777;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 10px;
             border-radius: 5px;
+            font-size: 5em;
+            /* Make the question mark bigger */
+            margin-left: 20px;
+        }
+
+        /* Text container to take up remaining space */
+        .text-container {
+            flex-grow: 1;
+            /* Allows the text container to fill the remaining space */
+            text-align: center;
+            /* Center the text within the container */
         }
 
         /* Delete Image Button Styles */
@@ -491,13 +505,13 @@ woman une femme"></textarea>
 
             // Function to generate the HTML content for a slide
             function generateSlideContent(englishWord, wordWithOne, wordWithDefiniteArticle, possessiveArticle,
-                frenchWord, guessableText, imageURL) {
+                frenchWord, guessableText) {
                 // 2. Linguee Link
                 const lingueeURL =
                     `https://www.linguee.com/french-english/search?source=auto&query=${encodeURIComponent(frenchWord)}`;
 
                 // 3. Interactive English Word Reveal
-                const englishWordDisplay = `<span class="english-word hidden">${englishWord}</span>`;
+                const englishWordDisplay = `<span class="english-word hidden" data-revealed="false">${englishWord}</span>`;
 
                 // Construct the URLs
                 const googleTranslateURL =
@@ -505,23 +519,22 @@ woman une femme"></textarea>
                 const wordReferenceURL = `https://www.wordreference.com/fren/${encodeURIComponent(frenchWord)}`;
                 const forvoURL = `https://forvo.com/word/${encodeURIComponent(frenchWord)}/#fr`;
 
-                // Always start with a placeholder
-                let imageDisplay = `<div class="image-placeholder">Loading image...</div>`;
-
                 return `
-                    ${imageDisplay}
-                    <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
-                    <p>${wordWithOne}</p>
-                    <p>${wordWithDefiniteArticle}</p>
-                    <p>${possessiveArticle} ${frenchWord}</p>
-                    <p>${guessableText}</p>
-                    <div class="slide-buttons">
-                        <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
-                        <a href="${wordReferenceURL}" target="_blank">WordReference</a>
-                        <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
-                        <a href="${lingueeURL}" target="_blank">Linguee</a>
-                        <button class="delete-image-button" data-frenchword="${frenchWord}">Delete Image</button>
+                    <div class="text-container">
+                        <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
+                        <p>${wordWithOne}</p>
+                        <p>${wordWithDefiniteArticle}</p>
+                        <p>${possessiveArticle} ${frenchWord}</p>
+                        <p>${guessableText}</p>
+                        <div class="slide-buttons">
+                            <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
+                            <a href="${wordReferenceURL}" target="_blank">WordReference</a>
+                            <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
+                            <a href="${lingueeURL}" target="_blank">Linguee</a>
+                            <button class="delete-image-button" data-frenchword="${frenchWord}">Delete Image</button>
+                        </div>
                     </div>
+                    <div class="image-placeholder">?</div>
                 `;
             }
 
@@ -539,17 +552,6 @@ woman une femme"></textarea>
                     return;
                 }
 
-                let imageURL = getLocalStorageItem(frenchWord);
-                const imageBlacklist = getImageBlacklist();
-
-                // Check if image is blacklisted
-                if (imageURL && imageBlacklist.includes(imageURL)) {
-                    console.warn("Image for", frenchWord, "is blacklisted:", imageURL);
-                    removeLocalStorageItem(frenchWord); // Remove blacklisted image from cache
-                    imageURL = null; // Force API call
-                }
-
-
                 // Abort any existing request
                 let abortController = slide.data('abortController');
                 if (abortController) {
@@ -561,6 +563,18 @@ woman une femme"></textarea>
                 slide.data('abortController', abortController); // Store abortController in slide data
                 const signal = abortController.signal;
 
+                // Display "Loading image..." placeholder
+                updateSlideWithPlaceholder(slide, "Loading image...");
+
+                let imageURL = getLocalStorageItem(frenchWord);
+                const imageBlacklist = getImageBlacklist();
+
+                // Check if image is blacklisted
+                if (imageURL && imageBlacklist.includes(imageURL)) {
+                    console.warn("Image for", frenchWord, "is blacklisted:", imageURL);
+                    removeLocalStorageItem(frenchWord); // Remove blacklisted image from cache
+                    imageURL = null; // Force API call
+                }
 
                 if (imageURL) {
                     // Image found in local storage
@@ -627,14 +641,15 @@ woman une femme"></textarea>
 
             function updateSlideWithImage(slide, imageURL) {
                 const imageDisplay = `<img src="${imageURL}" alt="${slide.data('english-word')}" class="pixabay-image">`;
-                slide.find('.image-placeholder').remove(); // Remove placeholder if it exists
-                slide.prepend(imageDisplay); // Prepend the image
+                slide.find('.image-placeholder').html(imageDisplay); // Add image inside the placeholder
             }
 
             function updateSlideWithPlaceholder(slide, message) {
-                const placeholder = `<div class="image-placeholder">${message}</div>`;
-                slide.find('.pixabay-image').remove(); // Remove image if it exists
-                slide.prepend(placeholder); // Prepend the placeholder
+                let content = "?";
+                if (message) {
+                    content = message;
+                }
+                slide.find('.image-placeholder').html(content); // Set the placeholder text
             }
 
             // Function to generate a single slide
@@ -687,8 +702,12 @@ woman une femme"></textarea>
 
                 // Image Handling - Store English word for later loading
                 const slideContent = generateSlideContent(englishWord, wordWithOne, wordWithDefiniteArticle,
-                    possessiveArticle, frenchWord, guessableText, null); // No image URL initially
+                    possessiveArticle, frenchWord, guessableText); // No image URL initially
+
                 const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}">${slideContent}</div>`);
+
+                // Initialize AbortController early
+                slide.data('abortController', new AbortController());
 
                 return slide;
             }
@@ -703,7 +722,7 @@ woman une femme"></textarea>
                 currentSlideIndex = 0;
                 displayErrorMessage(""); // Clear any previous errors
                 imageLoadFailures = 0; // Reset image load failures
-                imageLoadingEnabled = true;  // Re-enable image loading
+                imageLoadingEnabled = true; // Re-enable image loading
 
                 let lines = wordList.split('\n');
                 shuffleArray(lines); // Shuffle the array of lines
@@ -752,7 +771,15 @@ woman une femme"></textarea>
                 const currentSlide = slides[currentSlideIndex];
                 currentSlide.addClass("active");
 
-                loadImageForSlide(currentSlide); // Load image when slide becomes active
+                // Load image when slide becomes active
+                const englishWordSpan = currentSlide.find(".english-word");
+                if (!englishWordSpan.data("revealed")) {
+                    //if the english word is not visible, do not load the image
+                    return;
+                }
+                loadImageForSlide(currentSlide);
+
+
             }
 
             // ------------------------------------------------------------------------
@@ -820,15 +847,28 @@ woman une femme"></textarea>
                 }
             });
 
-            // Interactive English Word Reveal
-            dom.slideshowContainer.on("mouseenter", ".english-word.hidden", function () {
-                $(this).removeClass("hidden").fadeIn(300);
-            }).on("mouseleave", ".english-word", function () {
-                $(this).addClass("hidden");
-            }).on("click", ".english-word", function () {
-                $(this).off("mouseenter mouseleave"); // Disable hover effect
-                $(this).removeClass("hidden").show(); // Make permanently visible
+            // Interactive English Word Reveal - Single Click to Toggle
+            dom.slideshowContainer.on("click", ".english-word", function () {
+                const $this = $(this);
+                const revealed = $this.data("revealed");
+
+                if (revealed) {
+                    // Hide the word
+                    $this.addClass("hidden");
+                    $this.data("revealed", false);
+                } else {
+                    // Show the word
+                    $this.removeClass("hidden");
+                    $this.data("revealed", true);
+
+                    // Load the image if it's the active slide
+                    const slide = $this.closest(".slide");
+                    if (slide.hasClass("active")) {
+                        loadImageForSlide(slide);
+                    }
+                }
             });
+
 
             // ------------------------------------------------------------------------
             // Initialization
