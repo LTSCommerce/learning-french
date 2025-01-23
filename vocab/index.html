@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>French Word Slideshow Generator</title>
     <meta charset="UTF-8">
@@ -27,19 +28,31 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
+        /* Input Area Styles */
         #input-area {
             margin-bottom: 20px;
         }
 
         #word-list {
-            height: 200px; /* Fixed height for the textarea */
+            height: 200px;
+            /* Fixed height for the textarea */
         }
 
+        #load-list-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        /* Slideshow Container Styles */
         #slideshow-container {
             position: relative;
             overflow: hidden;
             border-radius: 10px;
-            height: 350px; /* Increased height to accommodate buttons */
+            height: 450px;
+            /* Increased height to accommodate image */
+            display: none;
         }
 
         .slide {
@@ -53,7 +66,6 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            font-size: 1.7em;
             color: white;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
@@ -65,51 +77,60 @@
 
         /* Gender-based color schemes */
         .slide.masculine {
-            background: linear-gradient(to bottom, #64b5f6, #2196f3); /* Blueish */
+            background: linear-gradient(to bottom, #64b5f6, #2196f3);
+            /* Blueish */
         }
 
         .slide.feminine {
-            background: linear-gradient(to bottom, #f48fb1, #e91e63); /* Pinkish */
+            background: linear-gradient(to bottom, #f48fb1, #e91e63);
+            /* Pinkish */
         }
 
         .slide.neutral {
-            background: linear-gradient(to bottom, #a1887f, #795548); /* Brownish */
+            background: linear-gradient(to bottom, #a1887f, #795548);
+            /* Brownish */
         }
 
+        /* Navigation Buttons Styles */
         #navigation-buttons {
             text-align: center;
             margin-top: 10px;
-        }
-
-        #error-message {
-            color: red;
-            margin-top: 10px;
-            text-align: center;
+            display: none;
         }
 
         #edit-button {
             margin-top: 10px;
         }
 
+        /* English Word Styles */
         .english-word {
             font-size: 1.5em;
             font-weight: bold;
+            cursor: pointer;
+            /* Indicate it's clickable */
         }
 
-        #load-list-area {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+        .english-word.hidden {
+            color: transparent;
+            /* Hide the text */
         }
 
+        .english-word.hidden::before {
+            content: "??????";
+            /* Placeholder - adjust length as needed */
+            color: rgba(255, 255, 255, 0.5);
+            /* Faded question marks */
+        }
+
+        /* Guessable Rules Styles */
         #guessable-rules {
             margin-top: 20px;
             padding: 15px;
             background-color: #f0f0f0;
             border-radius: 5px;
             text-align: center;
-            display: none; /* Initially hidden */
+            display: none;
+            /* Initially hidden */
         }
 
         #guessable-rules a {
@@ -121,244 +142,444 @@
             text-decoration: underline;
         }
 
+        /* Slide Buttons Styles */
         .slide-buttons {
             margin-top: 15px;
-            display: none; /* Hide buttons by default */
+            display: none;
+            /* Hide buttons by default */
         }
 
         .slide.active .slide-buttons {
-            display: block; /* Show buttons only for the active slide */
+            display: block !important;
+            /* Override any other display rules */
         }
 
         .slide-buttons a {
             display: inline-block;
-            padding: 6px 10px; /* Reduced padding */
-            margin: 0 3px; /* Reduced margin */
-            background-color: #ddd; /* Light gray background */
-            color: #333; /* Dark gray text */
+            padding: 6px 10px;
+            /* Reduced padding */
+            margin: 0 3px;
+            /* Reduced margin */
+            background-color: #ddd;
+            /* Light gray background */
+            color: #333;
+            /* Dark gray text */
             text-decoration: none;
-            border-radius: 4px; /* Slightly smaller border radius */
-            font-size: 0.9em; /* Smaller font size */
-            border: none; /* Removed border */
+            border-radius: 4px;
+            /* Slightly smaller border radius */
+            font-size: 0.9em;
+            /* Smaller font size */
+            border: none;
+            /* Removed border */
         }
 
         .slide-buttons a:hover {
-            background-color: #ccc; /* Slightly darker gray on hover */
+            background-color: #ccc;
+            /* Slightly darker gray on hover */
         }
 
+        /* Image Styles */
+        .pixabay-image {
+            max-width: 80%;
+            max-height: 200px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .image-placeholder {
+            width: 80%;
+            height: 200px;
+            background-color: #eee;
+            border: 1px dashed #999;
+            color: #777;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        /* Delete Image Button Styles */
+        .delete-image-button {
+            background-color: #f44336;
+            /* Red */
+            color: white;
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        .delete-image-button:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Error Message Styles */
+        #error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
 </head>
+
 <body>
 
-<div id="container">
-    <h1>French Word Slideshow Generator</h1>
+    <div id="container">
+        <h1>French Word Slideshow Generator</h1>
 
-    <div id="input-area">
-        <div id="load-list-area">
-            <label for="list-selector">Load Predefined List:</label>
-            <select id="list-selector" class="form-control" style="width: auto;">
-                <!-- Options will be dynamically added here -->
-            </select>
-            <button id="load-list-button" class="btn btn-secondary">Load List</button>
-        </div>
+        <div id="input-area">
+            <div id="load-list-area">
+                <label for="list-selector">Load Predefined List:</label>
+                <select id="list-selector" class="form-control" style="width: auto;">
+                    <!-- Options will be dynamically added here -->
+                </select>
+                <button id="load-list-button" class="btn btn-secondary">Load List</button>
+            </div>
 
-        <label for="word-list">Enter English word, gender prefix, and French noun (one per line):</label>
-        <textarea id="word-list" class="form-control" rows="5"
-                  placeholder="Example:
+            <label for="word-list">Enter English word, gender prefix, and French noun (one per line):</label>
+            <textarea id="word-list" class="form-control" rows="5" placeholder="Example:
 dog le chien
 table la table
 man un homme
 woman une femme"></textarea>
+        </div>
+
+        <button id="generate-button" class="btn btn-primary btn-block">Generate Slideshow</button>
+
+        <div id="slideshow-container">
+            <!-- Slides will be dynamically added here -->
+        </div>
+
+        <div id="navigation-buttons">
+            <button id="prev-button" class="btn btn-secondary">Previous</button>
+            <button id="next-button" class="btn btn-secondary">Next</button>
+            <button id="shuffle-button" class="btn btn-secondary">Shuffle</button>
+            <button id="edit-button" class="btn btn-secondary">Edit List</button>
+        </div>
+
+        <div id="guessable-rules">
+            <p><b>Quick Gender Guessing Rule:</b></p>
+            <p>Most words ending in 'e' or 'ion' are feminine, except those ending in '-age', '-ege', '-é', or '-isme',
+                which are usually masculine. Most other endings are masculine.</p>
+            <p>For a more detailed explanation, see <a href="https://frenchtogether.com/french-nouns-gender/"
+                    target="_blank">French Noun Gender Rules</a>.</p>
+        </div>
+
+        <div id="error-message">
+            <!-- Error messages will be displayed here -->
+        </div>
     </div>
 
-    <button id="generate-button" class="btn btn-primary btn-block">Generate Slideshow</button>
+    <script>
+        $(document).ready(function () {
 
-    <div id="slideshow-container" style="display: none;">
-        <!-- Slides will be dynamically added here -->
-    </div>
+            // ------------------------------------------------------------------------
+            // Configuration
+            // ------------------------------------------------------------------------
 
-    <div id="navigation-buttons" style="display: none;">
-        <button id="prev-button" class="btn btn-secondary">Previous</button>
-        <button id="next-button" class="btn btn-secondary">Next</button>
-        <button id="shuffle-button" class="btn btn-secondary">Shuffle</button>
-        <button id="edit-button" class="btn btn-secondary">Edit List</button>
-    </div>
+            const config = {
+                localStorageKey: "frenchWordList",
+                pixabayApiKey: "48411023-77af553a827e1673d414ebb53", // TODO: Consider a more secure way to store this
+                blacklistKey: "pixabayBlacklist",
+                availableLists: ["list1.txt"] // Hardcoded list of available files
+            };
 
-    <div id="guessable-rules">
-        <p><b>Quick Gender Guessing Rule:</b></p>
-        <p>Most words ending in 'e' or 'ion' are feminine, except those ending in '-age', '-ege', '-é', or '-isme', which are usually masculine.  Most other endings are masculine.</p>
-        <p>For a more detailed explanation, see <a href="https://frenchtogether.com/french-nouns-gender/" target="_blank">French Noun Gender Rules</a>.</p>
-    </div>
+            // ------------------------------------------------------------------------
+            // DOM Elements
+            // ------------------------------------------------------------------------
 
-    <div id="error-message">
-        <!-- Error messages will be displayed here -->
-    </div>
-</div>
+            const dom = {
+                inputArea: $("#input-area"),
+                wordListTextarea: $("#word-list"),
+                generateButton: $("#generate-button"),
+                slideshowContainer: $("#slideshow-container"),
+                navigationButtons: $("#navigation-buttons"),
+                prevButton: $("#prev-button"),
+                nextButton: $("#next-button"),
+                shuffleButton: $("#shuffle-button"),
+                editButton: $("#edit-button"),
+                errorMessage: $("#error-message"),
+                listSelector: $("#list-selector"),
+                loadListButton: $("#load-list-button"),
+                guessableRulesDiv: $("#guessable-rules")
+            };
 
-<script>
-    $(document).ready(function () {
+            // ------------------------------------------------------------------------
+            // Variables
+            // ------------------------------------------------------------------------
 
-        const inputArea = $("#input-area");
-        const wordListTextarea = $("#word-list");
-        const generateButton = $("#generate-button");
-        const slideshowContainer = $("#slideshow-container");
-        const navigationButtons = $("#navigation-buttons");
-        const prevButton = $("#prev-button");
-        const nextButton = $("#next-button");
-        const shuffleButton = $("#shuffle-button");
-        const editButton = $("#edit-button");
-        const errorMessage = $("#error-message");
-        let slides = [];
-        let currentSlideIndex = 0;
-        const localStorageKey = "frenchWordList";
+            let slides = [];
+            let currentSlideIndex = 0;
 
-        // New elements
-        const listSelector = $("#list-selector");
-        const loadListButton = $("#load-list-button");
-        const availableLists = ["list1.txt"]; // Hardcoded list of available files
-        const guessableRulesDiv = $("#guessable-rules");
+            // ------------------------------------------------------------------------
+            // Helper Functions - Local Storage
+            // ------------------------------------------------------------------------
 
-        // Function to determine if the gender is "guessable" based on the noun's ending
-       function isGuessable(frenchWord, prefix) {
-            const lowerCaseWord = frenchWord.toLowerCase();
-            let expectedGender = null;
-
-            if (lowerCaseWord.endsWith('e') || lowerCaseWord.endsWith('ion')) {
-                // Likely feminine, unless it's an exception
-                if (lowerCaseWord.endsWith('age') || lowerCaseWord.endsWith('ege') || lowerCaseWord.endsWith('é') || lowerCaseWord.endsWith('isme')) {
-                    expectedGender = 'masculine'; // Exception: Likely masculine
-                } else {
-                    expectedGender = 'feminine'; // Likely feminine
+            // Function to get item from local storage with error handling
+            function getLocalStorageItem(key) {
+                try {
+                    return localStorage.getItem(key);
+                } catch (e) {
+                    console.error("Error accessing localStorage:", e);
+                    displayErrorMessage("Error accessing local storage. See console for details.");
+                    return null;
                 }
-            } else {
-                expectedGender = 'masculine'; // Likely masculine
             }
 
-            // Determine actual gender from prefix
-            let actualGender = null;
-            if (["le", "un"].includes(prefix)) {
-                actualGender = 'masculine';
-            } else if (["la", "une"].includes(prefix)) {
-                actualGender = 'feminine';
-            } else {
-                console.warn("Unexpected prefix:", prefix); // Should not happen due to validation
-                return false; // Treat as not guessable
+            // Function to set item in local storage with error handling
+            function setLocalStorageItem(key, value) {
+                try {
+                    localStorage.setItem(key, value);
+                } catch (e) {
+                    console.error("Error setting localStorage:", e);
+                    displayErrorMessage("Error saving to local storage. See console for details.");
+                }
             }
 
-            return expectedGender === actualGender; // Return true if guess matches actual
-        }
+            // Function to remove item from local storage with error handling
+            function removeLocalStorageItem(key) {
+                try {
+                    localStorage.removeItem(key);
+                } catch (e) {
+                    console.error("Error removing from localStorage:", e);
+                    displayErrorMessage("Error removing from local storage. See console for details.");
+                }
+            }
 
-        // Function to load list from file and validate
-        function loadListFromFile(filename) {
-            fetch(filename)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Failed to load file: ${filename} (status ${response.status})`);
+            // ------------------------------------------------------------------------
+            // Helper Functions - Image Blacklist
+            // ------------------------------------------------------------------------
+
+            // Function to get the image blacklist from local storage
+            function getImageBlacklist() {
+                const blacklistString = getLocalStorageItem(config.blacklistKey);
+                return blacklistString ? JSON.parse(blacklistString) : [];
+            }
+
+            // Function to save the image blacklist to local storage
+            function saveImageBlacklist(blacklist) {
+                setLocalStorageItem(config.blacklistKey, JSON.stringify(blacklist));
+            }
+
+            // ------------------------------------------------------------------------
+            // Helper Functions - Error Handling
+            // ------------------------------------------------------------------------
+
+            function displayErrorMessage(message) {
+                dom.errorMessage.text(message);
+            }
+
+            // ------------------------------------------------------------------------
+            // Helper Functions - Gender Guessing
+            // ------------------------------------------------------------------------
+
+            // Function to determine if the gender is "guessable" based on the noun's ending
+            function isGuessable(frenchWord, prefix) {
+                const lowerCaseWord = frenchWord.toLowerCase();
+                let expectedGender = null;
+
+                if (lowerCaseWord.endsWith('e') || lowerCaseWord.endsWith('ion')) {
+                    // Likely feminine, unless it's an exception
+                    if (lowerCaseWord.endsWith('age') || lowerCaseWord.endsWith('ege') || lowerCaseWord.endsWith('é') ||
+                        lowerCaseWord.endsWith('isme')) {
+                        expectedGender = 'masculine'; // Exception: Likely masculine
+                    } else {
+                        expectedGender = 'feminine'; // Likely feminine
                     }
-                    return response.text();
-                })
-                .then(text => {
-                    if (!text) {
-                        errorMessage.text(`File ${filename} is empty.`);
-                        console.warn(`File ${filename} is empty.`);
-                        return;
-                    }
+                } else {
+                    expectedGender = 'masculine'; // Likely masculine
+                }
 
-                    let validLines = [];
-                    const lines = text.split('\n');
+                // Determine actual gender from prefix
+                let actualGender = null;
+                if (["le", "un"].includes(prefix)) {
+                    actualGender = 'masculine';
+                } else if (["la", "une"].includes(prefix)) {
+                    actualGender = 'feminine';
+                } else {
+                    console.warn("Unexpected prefix:", prefix); // Should not happen due to validation
+                    return false; // Treat as not guessable
+                }
 
-                    lines.forEach(line => {
-                        line = line.trim();
-                        if (!line) return; // Skip empty lines
+                return expectedGender === actualGender; // Return true if guess matches actual
+            }
 
-                        const parts = line.split(' ');
-                        if (parts.length < 3) {
-                            console.warn("Invalid line format: ", line);
-                            errorMessage.text("Invalid line format. Please use 'english prefix french'. See console for more.");
+            // ------------------------------------------------------------------------
+            // Helper Functions - Data Loading and Validation
+            // ------------------------------------------------------------------------
+
+            // Function to load list from file and validate
+            function loadListFromFile(filename) {
+                fetch(filename)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to load file: ${filename} (status ${response.status})`);
+                        }
+                        return response.text();
+                    })
+                    .then(text => {
+                        if (!text) {
+                            displayErrorMessage(`File ${filename} is empty.`);
+                            console.warn(`File ${filename} is empty.`);
                             return;
                         }
 
-                        const englishWord = parts[0].trim();
-                        const prefix = parts[1].trim().toLowerCase();
-                        const frenchWord = parts.slice(2).join(' ').trim();  // Handle multi-word French nouns
+                        let validLines = [];
+                        const lines = text.split('\n');
 
-                        const validPrefixes = ["le", "la", "un", "une"];
-                        if (!validPrefixes.includes(prefix)) {
-                            console.warn("Invalid prefix: ", prefix, " in line: ", line);
-                            errorMessage.text("Invalid gender prefix in file.  Valid prefixes are: le, la, un, une. See console for more.");
-                            return;
-                        }
-                        validLines.push(line);
+                        lines.forEach(line => {
+                            line = line.trim();
+                            if (!line) return; // Skip empty lines
+
+                            const parts = line.split(' ');
+                            if (parts.length < 3) {
+                                console.warn("Invalid line format: ", line);
+                                displayErrorMessage(
+                                    "Invalid line format in file. Please use 'english prefix french'. See console for more."
+                                );
+                                return;
+                            }
+
+                            const englishWord = parts[0].trim();
+                            const prefix = parts[1].trim().toLowerCase();
+                            const frenchWord = parts.slice(2).join(' ').trim(); // Handle multi-word French nouns
+
+                            const validPrefixes = ["le", "la", "un", "une"];
+                            if (!validPrefixes.includes(prefix)) {
+                                console.warn("Invalid prefix: ", prefix, " in line: ", line);
+                                displayErrorMessage(
+                                    "Invalid gender prefix in file. Valid prefixes are: le, la, un, une. See console for more."
+                                );
+                                return;
+                            }
+                            validLines.push(line);
+                        });
+
+                        dom.wordListTextarea.val(validLines.join('\n')); // Replace existing content
+                        setLocalStorageItem(config.localStorageKey, dom.wordListTextarea.val()); // Update local storage
+
+                    })
+                    .catch(error => {
+                        displayErrorMessage(`Error loading list from ${filename}. See console for details.`);
+                        console.error("Error loading list:", error);
+                    });
+            }
+
+            // ------------------------------------------------------------------------
+            // Helper Functions - Array Manipulation
+            // ------------------------------------------------------------------------
+
+            // Fisher-Yates shuffle algorithm
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+                }
+            }
+
+            // ------------------------------------------------------------------------
+            // Helper Functions - Slide Generation
+            // ------------------------------------------------------------------------
+
+            // Function to generate the HTML content for a slide
+            function generateSlideContent(englishWord, wordWithOne, wordWithDefiniteArticle, possessiveArticle,
+                frenchWord, guessableText, imageURL) {
+                // 2. Linguee Link
+                const lingueeURL =
+                    `https://www.linguee.com/french-english/search?source=auto&query=${encodeURIComponent(frenchWord)}`;
+
+                // 3. Interactive English Word Reveal
+                const englishWordDisplay = `<span class="english-word hidden">${englishWord}</span>`;
+
+                // Construct the URLs
+                const googleTranslateURL =
+                    `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate}`;
+                const wordReferenceURL = `https://www.wordreference.com/fren/${encodeURIComponent(frenchWord)}`;
+                const forvoURL = `https://forvo.com/word/${encodeURIComponent(frenchWord)}/#fr`;
+
+                let imageDisplay = '';
+
+                if (imageURL) {
+                    imageDisplay = `<img src="${imageURL}" alt="${englishWord}" class="pixabay-image">`;
+                } else {
+                    imageDisplay = `<div class="image-placeholder">No image found</div>`;
+                }
+
+                return `
+                    ${imageDisplay}
+                    <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
+                    <p>${wordWithOne}</p>
+                    <p>${wordWithDefiniteArticle}</p>
+                    <p>${possessiveArticle} ${frenchWord}</p>
+                    <p>${guessableText}</p>
+                    <div class="slide-buttons">
+                        <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
+                        <a href="${wordReferenceURL}" target="_blank">WordReference</a>
+                        <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
+                        <a href="${lingueeURL}" target="_blank">Linguee</a>
+                        <button class="delete-image-button" data-frenchword="${frenchWord}">Delete Image</button>
+                    </div>
+                `;
+            }
+
+            // Function to fetch an image from Pixabay API
+            async function fetchImageFromPixabay(englishWord) {
+                try {
+                    const response = await $.ajax({
+                        url: `https://pixabay.com/api/?key=${config.pixabayApiKey}&q=${encodeURIComponent(englishWord)}&image_type=photo`,
+                        dataType: 'jsonp'
                     });
 
-                    wordListTextarea.val(validLines.join('\n')); // Replace existing content
-                    localStorage.setItem(localStorageKey, wordListTextarea.val()); //Update local storage
+                    const imageBlacklist = getImageBlacklist();
 
-                })
-                .catch(error => {
-                    errorMessage.text(`Error loading list from ${filename}. See console for details.`);
-                    console.error("Error loading list:", error);
-                });
-        }
-
-
-        // Populate the list selector
-        availableLists.forEach(filename => {
-            listSelector.append($("<option>").val(filename).text(filename));
-        });
-
-        // Load list on button click
-        loadListButton.click(function () {
-            const selectedFile = listSelector.val();
-            loadListFromFile(selectedFile);
-        });
-
-
-        // Load word list from local storage on page load
-        if (localStorage.getItem(localStorageKey)) {
-            wordListTextarea.val(localStorage.getItem(localStorageKey));
-        }
-
-        // Fisher-Yates shuffle algorithm
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+                    if (response.hits.length > 0) {
+                        // Find a non-blacklisted image
+                        for (let i = 0; i < response.hits.length; i++) {
+                            const hit = response.hits[i];
+                            if (!imageBlacklist.includes(hit.webformatURL)) {
+                                return hit.webformatURL; // Use the first valid image
+                            }
+                        }
+                        console.warn("No non-blacklisted images found on Pixabay for", englishWord);
+                        return null;
+                    } else {
+                        console.warn("No images found on Pixabay for", englishWord);
+                        return null;
+                    }
+                } catch (error) {
+                    console.error("Error fetching image from Pixabay:", error);
+                    displayErrorMessage("Error fetching image from Pixabay. See console for details.");
+                    return null;
+                }
             }
-        }
 
-        function generateSlideshow(wordList) {
-            slideshowContainer.empty(); // Clear any existing slides
-            slides = []; // Reset the slides array
-            currentSlideIndex = 0;
-            errorMessage.text("");  // Clear any previous errors
-
-            let lines = wordList.split('\n');
-            shuffleArray(lines); // Shuffle the array of lines
-
-            let validWordsCount = 0;
-
-            lines.forEach(line => { // Use forEach so that each line has its own scope
+            // Function to generate a single slide
+            async function generateSlide(line) {
                 line = line.trim();
-                if (!line) return; // Skip empty lines
+                if (!line) return null; // Skip empty lines
 
                 const parts = line.split(' ');
                 if (parts.length < 3) {
                     console.warn("Invalid line format: ", line);
-                    errorMessage.text("Invalid line format. Please use 'english prefix french'. See console for more.");
-                    return;
+                    displayErrorMessage(
+                        "Invalid line format. Please use 'english prefix french'. See console for more.");
+                    return null;
                 }
 
                 const englishWord = parts[0].trim();
                 const prefix = parts[1].trim().toLowerCase();
-                // important: french word must be declared inside the loop so that each one is unique
-                const frenchWord = parts.slice(2).join(' ').trim();  // Handle multi-word French nouns
+                const frenchWord = parts.slice(2).join(' ').trim(); // Handle multi-word French nouns
 
                 const validPrefixes = ["le", "la", "un", "une"];
                 if (!validPrefixes.includes(prefix)) {
                     console.warn("Invalid prefix: ", prefix, " in line: ", line);
-                    errorMessage.text("Invalid gender prefix.  Valid prefixes are: le, la, un, une. See console for more.");
-                    return;
+                    displayErrorMessage("Invalid gender prefix. Valid prefixes are: le, la, un, une. See console for more.");
+                    return null;
                 }
 
                 let genderClass = 'neutral';
@@ -368,105 +589,204 @@ woman une femme"></textarea>
                     genderClass = 'feminine';
                 }
 
-                let definiteArticle = (prefix === "un" || prefix === "une") ? "" : prefix; //initailise as before
+                let definiteArticle = (prefix === "un" || prefix === "une") ? "" : prefix; // initailise as before
 
-                const startsWithVowelOrH = /^[aeiouh]/i.test(frenchWord); //use regex
+                const startsWithVowelOrH = /^[aeiouh]/i.test(frenchWord); // use regex
 
                 if (startsWithVowelOrH && (prefix === "le" || prefix === "la")) {
-                    definiteArticle = "l'";  // Contract the article
+                    definiteArticle = "l'"; // Contract the article
                 } else {
                     definiteArticle = prefix;
                 }
 
                 const possessiveArticle = (genderClass === 'masculine') ? "son" : "ta";
-                const wordWithDefiniteArticle =  definiteArticle + " " + frenchWord;
-                const wordWithOne =  (genderClass === 'masculine') ? "un " + frenchWord : "une " + frenchWord;
+                const wordWithDefiniteArticle = definiteArticle + " " + frenchWord;
+                const wordWithOne = (genderClass === 'masculine') ? "un " + frenchWord : "une " + frenchWord;
 
                 const guessable = isGuessable(frenchWord, prefix);
                 let guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
 
-                // Construct the URLs - put the construction inside the loop so it's not overwritten
-                const googleTranslateURL = `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate`;
-                const wordReferenceURL = `https://www.wordreference.com/fren/${encodeURIComponent(frenchWord)}`;
-                const forvoURL = `https://forvo.com/word/${encodeURIComponent(frenchWord)}/#fr`;
+                // 1. Image Handling (Local Storage, Blacklist, Pixabay API)
+                let imageURL = getLocalStorageItem(frenchWord);
+                const imageBlacklist = getImageBlacklist();
+                let imageElement = '';
 
-                const slideContent = `
-                    <p class="english-word"><b>${englishWord}</b></p>
-                    <p>${wordWithOne}</p>
-                    <p>${wordWithDefiniteArticle}</p>
-                    <p>${possessiveArticle} ${frenchWord}</p>
-                    <p>${guessableText}</p>
-                    <div class="slide-buttons">
-                        <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
-                        <a href="${wordReferenceURL}" target="_blank">WordReference</a>
-                        <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
-                    </div>
-                `;
+                // Check if image is blacklisted
+                if (imageURL && imageBlacklist.includes(imageURL)) {
+                    console.warn("Image for", frenchWord, "is blacklisted:", imageURL);
+                    removeLocalStorageItem(frenchWord); // Remove blacklisted image from cache
+                    imageURL = null; // Force API call
+                }
 
+                if (!imageURL) {
+                    imageURL = await fetchImageFromPixabay(englishWord);
+                    if (imageURL) {
+                        setLocalStorageItem(frenchWord, imageURL); // Save to local storage
+                    }
+                }
+
+                const slideContent = generateSlideContent(englishWord, wordWithOne, wordWithDefiniteArticle,
+                    possessiveArticle, frenchWord, guessableText, imageURL);
                 const slide = $(`<div class="slide ${genderClass}">${slideContent}</div>`);
-                slideshowContainer.append(slide);
-                slides.push(slide);
-                validWordsCount++;
+
+                return slide;
+            }
+
+            // ------------------------------------------------------------------------
+            // Main Function - Generate Slideshow
+            // ------------------------------------------------------------------------
+
+            async function generateSlideshow(wordList) {
+                dom.slideshowContainer.empty(); // Clear any existing slides
+                slides = []; // Reset the slides array
+                currentSlideIndex = 0;
+                displayErrorMessage(""); // Clear any previous errors
+
+                let lines = wordList.split('\n');
+                shuffleArray(lines); // Shuffle the array of lines
+
+                let validWordsCount = 0;
+
+                for (const line of lines) {
+                    const slide = await generateSlide(line);
+                    if (slide) {
+                        dom.slideshowContainer.append(slide);
+                        slides.push(slide);
+                        validWordsCount++;
+                    }
+                }
+
+                if (validWordsCount === 0) {
+                    displayErrorMessage("No valid words found in the input.");
+                    return;
+                }
+
+                showSlide(0); // Show the first slide
+                dom.inputArea.hide();
+                dom.generateButton.hide();
+                dom.slideshowContainer.show();
+                dom.navigationButtons.show();
+                dom.guessableRulesDiv.show(); // Show the rules div
+
+                // Save word list to local storage
+                setLocalStorageItem(config.localStorageKey, wordList);
+            }
+
+            // ------------------------------------------------------------------------
+            // Helper Function - Slide Display
+            // ------------------------------------------------------------------------
+
+            function showSlide(index) {
+                if (index < 0) {
+                    currentSlideIndex = slides.length - 1;
+                } else if (index >= slides.length) {
+                    currentSlideIndex = 0;
+                } else {
+                    currentSlideIndex = index;
+                }
+
+                $(".slide").removeClass("active");
+                slides[currentSlideIndex].addClass("active");
+            }
+
+            // ------------------------------------------------------------------------
+            // Event Handlers
+            // ------------------------------------------------------------------------
+
+            // Generate Slideshow Button Click
+            dom.generateButton.click(function () {
+                const wordList = dom.wordListTextarea.val();
+                generateSlideshow(wordList);
             });
 
-            if (validWordsCount === 0) {
-                errorMessage.text("No valid words found in the input.");
-                return;
+            // Previous Button Click
+            dom.prevButton.click(function () {
+                showSlide(currentSlideIndex - 1);
+            });
+
+            // Next Button Click
+            dom.nextButton.click(function () {
+                showSlide(currentSlideIndex + 1);
+            });
+
+            // Shuffle Button Click
+            dom.shuffleButton.click(function () {
+                const wordList = dom.wordListTextarea.val();
+                generateSlideshow(wordList);
+            });
+
+            // Edit Button Click
+            dom.editButton.click(function () {
+                dom.slideshowContainer.hide();
+                dom.navigationButtons.hide();
+                dom.guessableRulesDiv.hide(); // Hide the rules div
+                dom.inputArea.show();
+                dom.generateButton.show();
+            });
+
+            // Save word list to local storage when the textarea changes
+            dom.wordListTextarea.on('input', function () {
+                setLocalStorageItem(config.localStorageKey, dom.wordListTextarea.val());
+            });
+
+            // Event delegation for dynamically added "Delete Image" buttons
+            dom.slideshowContainer.on("click", ".delete-image-button", function () {
+                const frenchWord = $(this).data("frenchword");
+                const imageURL = getLocalStorageItem(frenchWord); // Get URL before deleting
+
+                if (frenchWord) {
+                    // Remove from local storage
+                    removeLocalStorageItem(frenchWord);
+
+                    // Add to blacklist
+                    const blacklist = getImageBlacklist();
+                    if (imageURL && !blacklist.includes(imageURL)) {
+                        blacklist.push(imageURL);
+                        saveImageBlacklist(blacklist);
+                        console.log("Image blacklisted:", imageURL, "for word:", frenchWord);
+                    }
+
+                    // Re-generate the slideshow to update the current view
+                    const wordList = dom.wordListTextarea.val();
+                    generateSlideshow(wordList);
+                } else {
+                    console.warn("French word not found for delete image button.");
+                }
+            });
+
+            // Interactive English Word Reveal
+            dom.slideshowContainer.on("mouseenter", ".english-word.hidden", function () {
+                $(this).removeClass("hidden").fadeIn(300);
+            }).on("mouseleave", ".english-word", function () {
+                $(this).addClass("hidden");
+            }).on("click", ".english-word", function () {
+                $(this).off("mouseenter mouseleave"); // Disable hover effect
+                $(this).removeClass("hidden").show(); // Make permanently visible
+            });
+
+            // ------------------------------------------------------------------------
+            // Initialization
+            // ------------------------------------------------------------------------
+
+            // Populate the list selector
+            config.availableLists.forEach(filename => {
+                dom.listSelector.append($("<option>").val(filename).text(filename));
+            });
+
+            // Load list on button click
+            dom.loadListButton.click(function () {
+                const selectedFile = dom.listSelector.val();
+                loadListFromFile(selectedFile);
+            });
+
+            // Load word list from local storage on page load
+            if (getLocalStorageItem(config.localStorageKey)) {
+                dom.wordListTextarea.val(getLocalStorageItem(config.localStorageKey));
             }
 
-            showSlide(0); // Show the first slide
-            inputArea.hide();
-            generateButton.hide();
-            slideshowContainer.show();
-            navigationButtons.show();
-            guessableRulesDiv.show(); // Show the rules div
-
-            // Save word list to local storage
-            localStorage.setItem(localStorageKey, wordList);
-        }
-
-        function showSlide(index) {
-            if (index < 0) {
-                currentSlideIndex = slides.length - 1;
-            } else if (index >= slides.length) {
-                currentSlideIndex = 0;
-            } else {
-                currentSlideIndex = index;
-            }
-
-            $(".slide").removeClass("active");
-            slides[currentSlideIndex].addClass("active");
-        }
-
-        generateButton.click(function () {
-            const wordList = wordListTextarea.val();
-            generateSlideshow(wordList);
         });
+    </script>
 
-        prevButton.click(function () {
-            showSlide(currentSlideIndex - 1);
-        });
+</body>
 
-        nextButton.click(function () {
-            showSlide(currentSlideIndex + 1);
-        });
-
-         shuffleButton.click(function () {
-            const wordList = wordListTextarea.val();
-            generateSlideshow(wordList);
-        });
-
-        editButton.click(function () {
-            slideshowContainer.hide();
-            navigationButtons.hide();
-            guessableRulesDiv.hide(); // Hide the rules div
-            inputArea.show();
-            generateButton.show();
-        });
-
-        // Save word list to local storage when the textarea changes - this is an alternative approach that might be better
-        wordListTextarea.on('input', function() {
-            localStorage.setItem(localStorageKey, wordListTextarea.val());
-        });
-    });
-</script>
+</html>
