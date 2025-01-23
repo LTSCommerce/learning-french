@@ -39,7 +39,7 @@
             position: relative;
             overflow: hidden;
             border-radius: 10px;
-            height: 300px; /* Fixed height for consistent layout */
+            height: 350px; /* Increased height to accommodate buttons */
         }
 
         .slide {
@@ -53,7 +53,7 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            font-size: 1.7em; /* Adjusted font size */
+            font-size: 1.7em;
             color: white;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
@@ -119,6 +119,24 @@
 
         #guessable-rules a:hover {
             text-decoration: underline;
+        }
+
+        .slide-buttons {
+            margin-top: 15px;
+        }
+
+        .slide-buttons a {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 0 5px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .slide-buttons a:hover {
+            background-color: #0056b3;
         }
 
     </style>
@@ -342,12 +360,20 @@ woman une femme"></textarea>
                 const guessable = isGuessable(frenchWord, prefix);
                 let guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
 
+                // Construct the URLs
+                const googleTranslateURL = `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate`;
+                const wordReferenceURL = `https://www.wordreference.com/fren/${encodeURIComponent(frenchWord)}`;
+
                 const slideContent = `
                     <p class="english-word"><b>${englishWord}</b></p>
                     <p>${wordWithOne}</p>
                     <p>${wordWithDefiniteArticle}</p>
                     <p>${possessiveArticle} ${frenchWord}</p>
                     <p>${guessableText}</p>
+                    <div class="slide-buttons">
+                        <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
+                        <a href="${wordReferenceURL}" target="_blank">WordReference</a>
+                    </div>
                 `;
 
                 const slide = $(`<div class="slide ${genderClass}">${slideContent}</div>`);
