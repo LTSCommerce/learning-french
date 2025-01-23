@@ -239,6 +239,11 @@
             margin-top: 10px;
             text-align: center;
         }
+
+        /* Clear List Button Styles */
+        #clear-list-button {
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -262,6 +267,8 @@ dog le chien
 table la table
 man un homme
 woman une femme"></textarea>
+
+            <button id="clear-list-button" class="btn btn-warning btn-block">Clear List</button>
         </div>
 
         <button id="generate-button" class="btn btn-primary btn-block">Generate Slideshow</button>
@@ -325,7 +332,8 @@ woman une femme"></textarea>
                 errorMessage: $("#error-message"),
                 listSelector: $("#list-selector"),
                 loadListButton: $("#load-list-button"),
-                guessableRulesDiv: $("#guessable-rules")
+                guessableRulesDiv: $("#guessable-rules"),
+                clearListButton: $("#clear-list-button")
             };
 
             // ------------------------------------------------------------------------
@@ -711,7 +719,7 @@ woman une femme"></textarea>
                 const slideContent = generateSlideContent(englishWord, wordWithOne, wordWithDefiniteArticle,
                     possessiveArticle, frenchWord, guessableText); // No image URL initially
 
-                const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}">${slideContent}</div>`);
+                const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}" data-ever-revealed="false">${slideContent}</div>`);
 
                 // Initialize AbortController early
                 slide.data('abortController', new AbortController());
@@ -779,8 +787,11 @@ woman une femme"></textarea>
                 currentSlide.addClass("active");
 
                 // Load image when slide becomes active, but only if the english word has been revealed
+                // or if it was ever revealed before
                 const englishWordSpan = currentSlide.find(".english-word");
-                if (!englishWordSpan.hasClass("hidden")) {
+                const everRevealed = currentSlide.data("ever-revealed");
+
+                if (!englishWordSpan.hasClass("hidden") || everRevealed) {
                     loadImageForSlide(currentSlide);
                 }
             }
@@ -820,6 +831,12 @@ woman une femme"></textarea>
                 dom.generateButton.show();
             });
 
+            // Clear List Button Click
+            dom.clearListButton.click(function () {
+                dom.wordListTextarea.val("");
+                removeLocalStorageItem(config.localStorageKey);
+            });
+
             // Save word list to local storage when the textarea changes
             dom.wordListTextarea.on('input', function () {
                 setLocalStorageItem(config.localStorageKey, dom.wordListTextarea.val());
@@ -854,6 +871,7 @@ woman une femme"></textarea>
             dom.slideshowContainer.on("click", ".english-word", function () {
                 const $this = $(this);
                 const revealed = $this.data("revealed");
+                const slide = $this.closest(".slide");
 
                 if (revealed) {
                     // Hide the word
@@ -864,8 +882,10 @@ woman une femme"></textarea>
                     $this.removeClass("hidden");
                     $this.data("revealed", true);
 
+                    // Set the "ever-revealed" flag to true
+                    slide.data("ever-revealed", true);
+
                     // Load the image if it's the active slide
-                    const slide = $this.closest(".slide");
                     if (slide.hasClass("active")) {
                         loadImageForSlide(slide);
                     }
