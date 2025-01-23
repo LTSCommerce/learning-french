@@ -112,7 +112,8 @@
             font-weight: bold;
             cursor: pointer;
             /* Indicate it's clickable */
-            user-select: none; /* Prevent text selection during double click */
+            user-select: none;
+            /* Prevent text selection during double click */
         }
 
         .english-word.hidden {
@@ -282,6 +283,9 @@ woman une femme"></textarea>
                 which are usually masculine. Most other endings are masculine.</p>
             <p>For a more detailed explanation, see <a href="https://frenchtogether.com/french-nouns-gender/"
                     target="_blank">French Noun Gender Rules</a>.</p>
+            <p>For even more information, you can also read <a
+                    href="https://mangolanguages.com/resources/learn/grammar/french/how-to-determine-the-gender-of-nouns-in-french"
+                    target="_blank">this page</a>.</p>
         </div>
 
         <div id="error-message">
@@ -519,13 +523,16 @@ woman une femme"></textarea>
                 const wordReferenceURL = `https://www.wordreference.com/fren/${encodeURIComponent(frenchWord)}`;
                 const forvoURL = `https://forvo.com/word/${encodeURIComponent(frenchWord)}/#fr`;
 
+                // Gender Guessing Link
+                const genderGuessingURL = "https://mangolanguages.com/resources/learn/grammar/french/how-to-determine-the-gender-of-nouns-in-french";
+
                 return `
                     <div class="text-container">
                         <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
                         <p>${wordWithOne}</p>
                         <p>${wordWithDefiniteArticle}</p>
                         <p>${possessiveArticle} ${frenchWord}</p>
-                        <p>${guessableText}</p>
+                        <p>${guessableText} - <a href="${genderGuessingURL}" target="_blank">Learn more</a></p>
                         <div class="slide-buttons">
                             <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
                             <a href="${wordReferenceURL}" target="_blank">WordReference</a>
