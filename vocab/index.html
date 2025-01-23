@@ -95,6 +95,13 @@
             font-size: 1.5em;
             font-weight: bold;
         }
+
+        #load-list-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -103,6 +110,14 @@
     <h1>French Word Slideshow Generator</h1>
 
     <div id="input-area">
+        <div id="load-list-area">
+            <label for="list-selector">Load Predefined List:</label>
+            <select id="list-selector" class="form-control" style="width: auto;">
+                <!-- Options will be dynamically added here -->
+            </select>
+            <button id="load-list-button" class="btn btn-secondary">Load List</button>
+        </div>
+
         <label for="word-list">Enter English word, gender prefix, and French noun (one per line):</label>
         <textarea id="word-list" class="form-control" rows="5"
                   placeholder="Example:
@@ -131,6 +146,7 @@ woman une femme"></textarea>
 
 <script>
     $(document).ready(function () {
+
         const inputArea = $("#input-area");
         const wordListTextarea = $("#word-list");
         const generateButton = $("#generate-button");
@@ -142,8 +158,78 @@ woman une femme"></textarea>
         const errorMessage = $("#error-message");
         let slides = [];
         let currentSlideIndex = 0;
-
         const localStorageKey = "frenchWordList";
+
+        // New elements
+        const listSelector = $("#list-selector");
+        const loadListButton = $("#load-list-button");
+        const availableLists = ["list1.txt"]; // Hardcoded list of available files
+
+        // Function to load list from file and validate
+        function loadListFromFile(filename) {
+            fetch(filename)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to load file: ${filename} (status ${response.status})`);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    if (!text) {
+                        errorMessage.text(`File ${filename} is empty.`);
+                        console.warn(`File ${filename} is empty.`);
+                        return;
+                    }
+
+                    let validLines = [];
+                    const lines = text.split('\n');
+
+                    lines.forEach(line => {
+                        line = line.trim();
+                        if (!line) return; // Skip empty lines
+
+                        const parts = line.split(' ');
+                        if (parts.length < 3) {
+                            console.warn("Invalid line format: ", line);
+                            errorMessage.text("Invalid line format in file. Please use 'english prefix french'. See console for more.");
+                            return;
+                        }
+
+                        const englishWord = parts[0].trim();
+                        const prefix = parts[1].trim().toLowerCase();
+                        const frenchWord = parts.slice(2).join(' ').trim();  // Handle multi-word French nouns
+
+                        const validPrefixes = ["le", "la", "un", "une"];
+                        if (!validPrefixes.includes(prefix)) {
+                            console.warn("Invalid prefix: ", prefix, " in line: ", line);
+                            errorMessage.text("Invalid gender prefix in file.  Valid prefixes are: le, la, un, une. See console for more.");
+                            return;
+                        }
+                        validLines.push(line);
+                    });
+
+                    wordListTextarea.val(validLines.join('\n')); // Replace existing content
+                    localStorage.setItem(localStorageKey, wordListTextarea.val()); //Update local storage
+
+                })
+                .catch(error => {
+                    errorMessage.text(`Error loading list from ${filename}. See console for details.`);
+                    console.error("Error loading list:", error);
+                });
+        }
+
+
+        // Populate the list selector
+        availableLists.forEach(filename => {
+            listSelector.append($("<option>").val(filename).text(filename));
+        });
+
+        // Load list on button click
+        loadListButton.click(function () {
+            const selectedFile = listSelector.val();
+            loadListFromFile(selectedFile);
+        });
+
 
         // Load word list from local storage on page load
         if (localStorage.getItem(localStorageKey)) {
