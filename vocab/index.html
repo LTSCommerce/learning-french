@@ -123,6 +123,11 @@
 
         .slide-buttons {
             margin-top: 15px;
+            display: none; /* Hide buttons by default */
+        }
+
+        .slide.active .slide-buttons {
+            display: block; /* Show buttons only for the active slide */
         }
 
         .slide-buttons a {
