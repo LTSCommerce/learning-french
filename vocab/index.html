@@ -179,7 +179,7 @@ woman une femme"></textarea>
 
     <div id="guessable-rules">
         <p><b>Quick Gender Guessing Rule:</b></p>
-        <p>Most words ending in 'e' are feminine, except those ending in '-age', '-ege', '-é', or '-isme', which are usually masculine.  Most other endings are masculine.</p>
+        <p>Most words ending in 'e' or 'ion' are feminine, except those ending in '-age', '-ege', '-é', or '-isme', which are usually masculine.  Most other endings are masculine.</p>
         <p>For a more detailed explanation, see <a href="https://frenchtogether.com/french-nouns-gender/" target="_blank">French Noun Gender Rules</a>.</p>
     </div>
 
@@ -212,16 +212,33 @@ woman une femme"></textarea>
         const guessableRulesDiv = $("#guessable-rules");
 
         // Function to determine if the gender is "guessable" based on the noun's ending
-        function isGuessable(frenchWord, prefix) {
-            const lowerCaseWord = frenchWord.toLowerCase(); // Avoid case sensitivity
-            if (lowerCaseWord.endsWith('e')) {
+       function isGuessable(frenchWord, prefix) {
+            const lowerCaseWord = frenchWord.toLowerCase();
+            let expectedGender = null;
+
+            if (lowerCaseWord.endsWith('e') || lowerCaseWord.endsWith('ion')) {
+                // Likely feminine, unless it's an exception
                 if (lowerCaseWord.endsWith('age') || lowerCaseWord.endsWith('ege') || lowerCaseWord.endsWith('é') || lowerCaseWord.endsWith('isme')) {
-                    return false; // Likely masculine
+                    expectedGender = 'masculine'; // Exception: Likely masculine
+                } else {
+                    expectedGender = 'feminine'; // Likely feminine
                 }
-                return true; // Likely feminine
             } else {
-                return false; // Likely masculine
+                expectedGender = 'masculine'; // Likely masculine
             }
+
+            // Determine actual gender from prefix
+            let actualGender = null;
+            if (["le", "un"].includes(prefix)) {
+                actualGender = 'masculine';
+            } else if (["la", "une"].includes(prefix)) {
+                actualGender = 'feminine';
+            } else {
+                console.warn("Unexpected prefix:", prefix); // Should not happen due to validation
+                return false; // Treat as not guessable
+            }
+
+            return expectedGender === actualGender; // Return true if guess matches actual
         }
 
         // Function to load list from file and validate
