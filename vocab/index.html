@@ -103,7 +103,8 @@
                   placeholder="Example:
 dog le chien
 table la table
-tree l' arbre"></textarea>
+man un homme
+woman une femme"></textarea>
     </div>
 
     <button id="generate-button" class="btn btn-primary btn-block">Generate Slideshow</button>
@@ -161,10 +162,10 @@ tree l' arbre"></textarea>
                 const prefix = parts[1].trim().toLowerCase();
                 const frenchWord = parts.slice(2).join(' ').trim();  // Handle multi-word French nouns
 
-                const validPrefixes = ["le", "la", "l'", "un", "une"];
+                const validPrefixes = ["le", "la", "un", "une"];
                 if (!validPrefixes.includes(prefix)) {
                     console.warn("Invalid prefix: ", prefix, " in line: ", line);
-                    errorMessage.text("Invalid gender prefix.  Valid prefixes are: le, la, l', un, une. See console for more.");
+                    errorMessage.text("Invalid gender prefix.  Valid prefixes are: le, la, un, une. See console for more.");
                     return;
                 }
 
@@ -184,7 +185,7 @@ tree l' arbre"></textarea>
                 const slideContent = `
                     <p><b>English:</b> ${englishWord}</p>
                     <p>Un/Une: ${wordWithOne}</p>
-                    <p>Le/La/L': ${wordWithDefiniteArticle}</p>
+                    <p>Le/La: ${wordWithDefiniteArticle}</p>
                     <p>Ta/Sa: ${wordWithPossessive}</p>
                 `;
 
