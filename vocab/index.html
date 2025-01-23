@@ -314,7 +314,7 @@ woman une femme"></textarea>
 
             let validWordsCount = 0;
 
-            lines.forEach(line => {
+            lines.forEach(line => { // Use forEach so that each line has its own scope
                 line = line.trim();
                 if (!line) return; // Skip empty lines
 
@@ -327,6 +327,7 @@ woman une femme"></textarea>
 
                 const englishWord = parts[0].trim();
                 const prefix = parts[1].trim().toLowerCase();
+                // important: french word must be declared inside the loop so that each one is unique
                 const frenchWord = parts.slice(2).join(' ').trim();  // Handle multi-word French nouns
 
                 const validPrefixes = ["le", "la", "un", "une"];
@@ -360,7 +361,7 @@ woman une femme"></textarea>
                 const guessable = isGuessable(frenchWord, prefix);
                 let guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
 
-                // Construct the URLs
+                // Construct the URLs - put the construction inside the loop so it's not overwritten
                 const googleTranslateURL = `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate`;
                 const wordReferenceURL = `https://www.wordreference.com/fren/${encodeURIComponent(frenchWord)}`;
 
