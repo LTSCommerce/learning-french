@@ -90,6 +90,11 @@
         #edit-button {
             margin-top: 10px;
         }
+
+        .english-word {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -185,15 +190,14 @@ woman une femme"></textarea>
 
                 const definiteArticle = (prefix === "un" || prefix === "une") ? "" : prefix;
                 const possessiveArticle = (genderClass === 'masculine') ? "son" : "ta";
-                const wordWithDefiniteArticle = definiteArticle + " " + frenchWord;
-                const wordWithOne = (genderClass === 'masculine') ? "un " + frenchWord : "une " + frenchWord;
-                const wordWithPossessive = possessiveArticle + " " + frenchWord;
+                const wordWithDefiniteArticle =  definiteArticle + " " + frenchWord;
+                const wordWithOne =  (genderClass === 'masculine') ? "un " + frenchWord : "une " + frenchWord;
 
                 const slideContent = `
-                    <p><b>English:</b> ${englishWord}</p>
-                    <p>Un/Une: ${wordWithOne}</p>
-                    <p>Le/La: ${wordWithDefiniteArticle}</p>
-                    <p>Ta/Sa: ${wordWithPossessive}</p>
+                    <p class="english-word"><b>${englishWord}</b></p>
+                    <p>${wordWithOne}</p>
+                    <p>${wordWithDefiniteArticle}</p>
+                    <p>${possessiveArticle} ${frenchWord}</p>
                 `;
 
                 const slide = $(`<div class="slide ${genderClass}">${slideContent}</div>`);
