@@ -138,6 +138,13 @@ woman une femme"></textarea>
         let slides = [];
         let currentSlideIndex = 0;
 
+        const localStorageKey = "frenchWordList";
+
+        // Load word list from local storage on page load
+        if (localStorage.getItem(localStorageKey)) {
+            wordListTextarea.val(localStorage.getItem(localStorageKey));
+        }
+
         function generateSlideshow(wordList) {
             slideshowContainer.empty(); // Clear any existing slides
             slides = []; // Reset the slides array
@@ -205,6 +212,9 @@ woman une femme"></textarea>
             generateButton.hide();
             slideshowContainer.show();
             navigationButtons.show();
+
+            // Save word list to local storage
+            localStorage.setItem(localStorageKey, wordList);
         }
 
         function showSlide(index) {
@@ -238,6 +248,11 @@ woman une femme"></textarea>
             navigationButtons.hide();
             inputArea.show();
             generateButton.show();
+        });
+
+        // Save word list to local storage when the textarea changes - this is an alternative approach that might be better
+        wordListTextarea.on('input', function() {
+            localStorage.setItem(localStorageKey, wordListTextarea.val());
         });
     });
 </script>
