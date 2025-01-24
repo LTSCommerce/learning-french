@@ -195,7 +195,7 @@
         // ------------------------------------------------------------------------
 
         // Function to generate the HTML content for a slide
-        function generateSlideContent(englishWord, isPlural, wordWithDefiniteArticle, possessiveArticle,
+        function generateSlideContent(englishWord, isPlural, wordWithOne,wordWithDefiniteArticle, possessiveArticle,
             frenchWord, guessableText) {
             
             const englishWordDisplay = `<span class="english-word hidden" data-revealed="false">${englishWord}</span>`;
@@ -419,7 +419,7 @@
             let guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
 
             // Image Handling - Store English word for later loading
-            const slideContent = generateSlideContent(englishWord, isPlural, wordWithDefiniteArticle,
+            const slideContent = generateSlideContent(englishWord, isPlural, wordWithOne, wordWithDefiniteArticle,
                 possessiveArticle, frenchWord, guessableText); // No image URL initially
 
             const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}" data-ever-revealed="false">${slideContent}</div>`);
