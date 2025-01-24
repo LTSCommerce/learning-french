@@ -114,7 +114,7 @@ body {
         height: 3em;      
 }
   
-  .flashy-text {
+  .cognate {
     font-size: 2rem;
     font-weight: bold;
     background: linear-gradient(45deg, #ff007f, #00d4ff, #ff00b3);
@@ -124,6 +124,11 @@ body {
     background-clip: text;
     display: inline-block;
   }
+
+  .english-word.hidden.cognate {
+    color: transparent;
+    /* Hide the text */
+}
   
 
 /* English Word Styles */
