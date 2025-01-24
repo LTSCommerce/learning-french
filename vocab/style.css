@@ -99,6 +99,20 @@ body {
     margin-top: 10px;
 }
 
+.llm-instructions{
+    
+        font-family: "Courier New", Courier, monospace;  /* Monospaced font for preformatted text */
+        font-size: 0.3em;  /* Small font size */
+        white-space: pre-wrap;  /* Ensure preformatted text wraps correctly */
+        word-wrap: break-word;  /* Break long words to avoid overflow */
+        background-color: #f4f4f4;  /* Light background for better visibility */
+        padding: 10px;  /* Space around the text */
+        border: 1px solid #ccc;  /* Light border for visibility */
+        border-radius: 5px;  /* Rounded corners for a cleaner look */
+        overflow: auto;
+        user-select: text;  /* Allow users to select and copy the text */
+        height: 3em;      
+}
   
   .flashy-text {
     font-size: 2rem;

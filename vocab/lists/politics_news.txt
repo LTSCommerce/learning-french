@@ -1,0 +1,96 @@
+# Politics:
+politics la politique
+government le gouvernement
+president le président
+prime minister le premier ministre
+male minister le ministre
+female minister la ministre
+party le parti
+election une élection
+vote un vote
+candidate un candidat
+candidate une candidate
+parliament le parlement
+congress le congrès
+constitution une constitution
+law une loi
+bill un projet de loi
+referendum un référendum
+debate un débat
+opposition une opposition (f)
+coalition une coalition
+democracy une démocratie
+
+# News:
+news les(f) nouvelles
+journal un journal
+newspaper un journal
+headline un titre
+reporter un journaliste
+reporter une journaliste
+broadcast une émission
+television la télévision
+radio la radio
+media les(m) médias
+press la presse
+interview une interview
+article un article
+coverage une couverture
+
+# Current Affairs:
+crisis une crise
+reform une réforme
+conflict un conflit
+negotiation une négociation
+agreement un accord
+tension une tension
+sanction une sanction
+protest une manifestation
+strike une grève
+demonstration une manifestation
+activist un activiste
+activist une activiste
+human rights les(m) droits de l'homme
+refugee un réfugié
+refugee une réfugiée
+diplomacy la diplomatie
+embassy une ambassade
+summit un sommet
+
+# Economy:
+economy une économie
+market le marché
+business les(m) affaires
+trade le commerce
+investment un investissement
+taxe une taxe
+recession une récession
+growth la croissance
+unemployment le chômage
+budget un budget
+interest rate un taux d'intérêt
+inflation une inflation
+
+# Social Issues:
+equality une égalité
+poverty la pauvreté
+education une éducation
+healthcare les(m) soins de santé
+immigration une immigration
+discrimination une discrimination
+violence la violence
+poverty la pauvreté
+unemployment le chômage
+rights les(m) droits
+
+# Environment:
+environment un environnement
+climate le climat
+pollution la pollution
+recycling le recyclage
+sustainability la durabilité
+greenhouse gases les(m) gaz à effet de serre
+deforestation la déforestation
+biodiversity la biodiversité
+ecosystem un écosystème
+conservation la conservation

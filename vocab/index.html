@@ -61,6 +61,58 @@ woman une femme"></textarea>
         <div id="error-message">
             <!-- Error messages will be displayed here -->
         </div>
+
+        <div id="instructions">
+            <h1>Instructions</h1>
+            Copy and paste a list into the text area. You can load a predefined list by selecting in the drop down and then pressing load list.
+
+            Alternatively, you can create your own list. For instructions to paste into chat GPT - see below
+        </div>
+        <div class="llm-instructions">
+            General Format:
+
+    Each word or phrase should be provided in three columns:
+        English word/phrase: The English term or concept.
+        French gender prefix: The appropriate French article or gendered term, in its correct form (e.g., "le", "la", "un", "une", "les(m)", "les(f)").
+        French word/phrase: The corresponding French noun or phrase.
+
+Gender Rules:
+
+    Masculine and Feminine Nouns:
+        For nouns that are both masculine and feminine (e.g., "minister"), provide separate lines:
+            Male version: Use the masculine article (e.g., "le ministre").
+            Female version: Use the feminine article (e.g., "la ministre").
+        Example for a gendered noun:
+            "male minister" "le ministre"
+            "female minister" "la ministre"
+    Plurals: For plural nouns, the gender indicator must include the (m) or (f) suffix without any space:
+        Example for plural noun:
+            "news" "les(f) nouvelles"
+
+Additional Rules:
+
+    No contractions: Do not use contractions like "l'" for articles (e.g., "l'homme"). Always use "un" or "une" for singular nouns, and "les(m)" or "les(f)" for plural nouns.
+        Example: Instead of "l'homme", use "un homme".
+    No extra spaces: Ensure there are no spaces between gender and noun for plurals (e.g., "les(f) nouvelles"), and no extra spaces in general.
+    Accuracy of Gender: Ensure the gender for each noun is accurately indicated (e.g., "un" for masculine, "une" for feminine).
+
+Word Groupings:
+
+    Categories: Provide a list of related words in categories. Each category should be clearly labelled (e.g., # Politics, # News, # Economy). The categories should be relevant to the intended subject matter and should follow a logical order.
+    Example of categories:
+        Politics
+        News
+        Economy
+        Environment
+        Social Issues
+
+Clarifications:
+
+    Keep the structure simple and consistent. Each row should follow the format strictly, and the word list should be easy to parse and use without additional explanations or formatting.
+    No speech marks: Avoid using speech marks around the words in the list.
+
+This format ensures clarity and consistency for generating accurate French word lists, and is optimised for generating content based on specific language rules and structures.
+        </div>
     </div>
 </body>
 
