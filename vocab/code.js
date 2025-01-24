@@ -219,7 +219,7 @@
             return `
             <div class="text-container">
                 <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
-                
+                ${frenchWords}
                 <p>${guessableText} - <a href="#guessable-rules">Learn more</a></p>
                 <div class="slide-buttons">
                     <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
