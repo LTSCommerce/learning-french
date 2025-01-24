@@ -380,7 +380,7 @@
         // Function to generate a single slide
         async function generateSlide(line) {                    
             parsed=splitLine(line);
-            if(null===parse){
+            if(null===parsed){
                 return null;
             }
             const englishWord = parsed.englishPhrase;
