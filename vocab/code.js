@@ -407,7 +407,7 @@
             if (!isPlural && startsWithVowelOrH && (definiteArticle === "le" || definiteArticle === "la")) {
                 definiteArticle = "l'"; // Contract the article
             } else {
-                definiteArticle = `definiteArticle `; // add a space
+                definiteArticle = `${definiteArticle} `; // add a space
             }
 
             
