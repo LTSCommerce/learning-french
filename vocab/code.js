@@ -208,7 +208,7 @@
 
             let cognate='';
             if(compareStringsIgnoreAccents(englishWord,frenchWord)){
-                cognate='<span class="flashy-text" title="this word is a cognate"><a href="https://docs.steinhardt.nyu.edu/pdfs/metrocenter/xr1/glossaries/ELA/GlossaryCognatesFrenchUpdated5-5-2014.pdf" target="_blank">cognate</a></span>';
+                cognate='<a href="https://docs.steinhardt.nyu.edu/pdfs/metrocenter/xr1/glossaries/ELA/GlossaryCognatesFrenchUpdated5-5-2014.pdf" target="_blank">cognate</a>';
             }
             const englishWordDisplay = `<span class="english-word hidden" data-revealed="false">${englishWord} ${cognate}</span>`;
 

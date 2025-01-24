@@ -99,31 +99,15 @@ body {
     margin-top: 10px;
 }
 
-@keyframes flashy {
-    0% {
-      background-position: 0% 50%;
-      color: #fff;
-    }
-    50% {
-      background-position: 100% 50%;
-      color: #000;
-    }
-    100% {
-      background-position: 0% 50%;
-      color: #fff;
-    }
-  }
   
   .flashy-text {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: bold;
-    text-transform: uppercase;
     background: linear-gradient(45deg, #ff007f, #00d4ff, #ff00b3);
     background-size: 400% 400%;
     color: #fff;
     -webkit-background-clip: text;
     background-clip: text;
-    animation: flashy 3s infinite ease-in-out;
     display: inline-block;
   }
   
