@@ -117,6 +117,7 @@ body {
   .cognate {
     font-size: 2rem;
     font-weight: bold;
+    font-style: italic;
     background: linear-gradient(45deg, #ff007f, #00d4ff, #ff00b3);
     background-size: 400% 400%;
     color: #fff;
