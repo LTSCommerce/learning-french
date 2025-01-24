@@ -99,7 +99,7 @@ body {
     margin-top: 10px;
 }
 
-.llm-instructions{
+#llm{
     
         font-family: "Courier New", Courier, monospace;  /* Monospaced font for preformatted text */
         font-size: 0.3em;  /* Small font size */
