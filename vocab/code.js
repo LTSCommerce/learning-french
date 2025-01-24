@@ -404,7 +404,7 @@
 
             const startsWithVowelOrH = /^[aeiouh]/i.test(frenchWord);
 
-            if (!isPlural && !startsWithVowelOrH && (definiteArticle === "le" || definiteArticle === "la")) {
+            if (!isPlural && startsWithVowelOrH && (definiteArticle === "le" || definiteArticle === "la")) {
                 definiteArticle = "l'"; // Contract the article
             } else {
                 definiteArticle = `definiteArticle `; // add a space
