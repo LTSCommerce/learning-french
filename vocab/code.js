@@ -198,7 +198,12 @@
         function generateSlideContent(englishWord, isPlural, wordWithOne,wordWithDefiniteArticle, possessiveArticle,
             frenchWord, guessableText) {
             
-            const englishWordDisplay = `<span class="english-word hidden" data-revealed="false">${englishWord}</span>`;
+
+            let cognate='';
+            if(wordWithOne.includes(englishWord)){
+                cognate='<span class="flashy-text" title="this word is a cognate"><a href="https://docs.steinhardt.nyu.edu/pdfs/metrocenter/xr1/glossaries/ELA/GlossaryCognatesFrenchUpdated5-5-2014.pdf" target="_blank">cognate</a></span>';
+            }
+            const englishWordDisplay = `<span class="english-word hidden" data-revealed="false">${englishWord} ${cognate}</span>`;
 
             // Construct the URLs
             const googleTranslateURL = `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate}`;
