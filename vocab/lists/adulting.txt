@@ -67,7 +67,7 @@ family une famille
 male partner un partenaire
 female partner une partenaire
 male parent un parent
-femail parent une parent
+female parent une parent
 marriage un mariage
 male child un enfant
 female child une enfant

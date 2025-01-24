@@ -190,10 +190,17 @@
             }
         }
 
-        function compareStringsIgnoreAccents(str1, str2) {
+        function compareStringsIgnoreAccents(englishWord,frenchWord) {
             // Normalize both strings by removing accents and converting to lowercase
-            let normalizedStr1 = str1.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-            let normalizedStr2 = str2.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            let normalizedStr1 = englishWord
+                .str.replace(/^(male |female )/, '')
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase();
+                
+            let normalizedStr2 = frenchWord
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase();
         
             return normalizedStr1 === normalizedStr2;
         }
