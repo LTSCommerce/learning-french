@@ -1,0 +1,233 @@
+# Supermarket
+produce	les	produits frais
+dairy	les	produits laitiers
+bakery	la	boulangerie
+meat	la	boucherie
+fish	le	poissonnerie
+frozen foods	les	surgelés
+beverages	les	boissons
+snacks	les	encas
+canned goods	les	conserves
+cleaning supplies	les	produits de nettoyage
+toiletries	les	articles de toilette
+bread	le	pain
+pasta	les	pâtes
+cereals	les	céréales
+sweets	les	bonbons
+condiments	les	condiments
+nuts	les	fruits secs
+spices	les	épices
+wine	le	vin
+coffee	le	café
+chips	les	chips
+dairy alternatives	les	alternatives laitières
+health foods	les	aliments sains
+pet food	la	nourriture pour animaux
+
+# Produce
+apple	la	pomme
+banana	la	banane
+carrot	la	carotte
+potato	la	pomme de terre
+tomato	la	tomate
+lettuce	la	laitue
+cucumber	le	concombre
+pepper	le	poivron
+strawberry	la	fraise
+grape	le	raisin
+
+# Dairy (Produits laitiers)
+milk	le	lait
+cheese	le	fromage
+butter	le	beurre
+yogurt	le	yaourt
+cream	la	crème
+eggs	un	œuf
+sour cream	la	crème aigre
+
+# Bakery (Boulangerie)
+bread	le	pain
+baguette	la	baguette
+croissant	le	croissant
+muffin	le	muffin
+cake	le	gâteau
+pastry	la	viennoiserie
+doughnut	le	beignet
+bun	le	pain de mie
+tart	la	tarte
+
+# Meat (Boucherie)
+chicken	le	poulet
+beef	le	bœuf
+pork	le	porc
+lamb	un	agneau
+sausage	la	saucisse
+steak	le	steak
+bacon	le	bacon
+turkey	la	dinde
+
+# Fish (Poissonnerie)
+salmon	le	saumon
+tuna	le	thon
+shrimp	les	crevettes
+cod	le	morue
+haddock	le	aiglefin
+sardine	la	sardine
+mackerel	le	maquereau
+trout	la	truite
+
+# Frozen Foods (Surgelés)
+frozen peas	les	pois surgelés
+ice cream	la	glace
+frozen pizza	la	pizza surgelée
+frozen vegetables	les	légumes surgelés
+frozen fish	le	poisson surgelé
+frozen fruit	les	fruits surgelés
+frozen meals	les	repas surgelés
+
+#Beverages (Boissons)
+water	la	eau
+juice	le	jus
+soda	le	soda
+coffee	le	café
+tea	le	thé
+beer	la	bière
+wine	le	vin
+energy drink	la	boisson énergisante
+milkshake	le	milkshake
+
+# Snacks (Encas)
+crisps	les	chips
+nuts	les	fruits secs
+popcorn	le	pop-corn
+chocolate	le	chocolat
+biscuit	le	biscuit
+cookie	le	cookie
+granola bar	la	barre de granola
+pretzels	les	bretzels
+chips	les	chips
+
+# Canned Goods (Conserves)
+beans	les	haricots
+peas	les	pois
+tuna	le	thon
+soup	la	soupe
+tomatoes	les	tomates
+corn	le	maïs
+mushrooms	les	champignons
+olives	les	olives
+fruit	le	fruit
+
+# Cleaning Supplies (Produits de nettoyage)
+detergent	le	détergent
+bleach	la	eau de javel
+sponges	les	éponges
+mop	le	balai à franges
+broom	le	balai
+trash bag	le	sac poubelle
+glass cleaner	le	nettoyant pour vitres
+cleaning cloth	le	chiffon
+disinfectant	le	désinfectant
+
+# Toiletries (Articles de toilette)
+toothpaste	le	dentifrice
+soap	le	savon
+shampoo	le	shampooing
+conditioner	le	après-shampoing
+toilet paper	le	papier toilette
+deodorant	le	déodorant
+toothbrush	la	brosse à dents
+razor	le	rasoir
+towel	la	serviette
+
+# Bread (Pain)
+loaf	le	pain
+baguette	la	baguette
+bun	le	pain de mie
+croissant	le	croissant
+sandwich	le	sandwich
+ciabatta	la	ciabatta
+focaccia	la	focaccia
+bread roll	le	petit pain
+
+# Pasta (Pâtes)
+spaghetti	les(m)	spaghetti
+penne	les	penne
+macaroni	le	macaroni
+fusilli	les	fusilli
+ravioli	le	ravioli
+lasagne	les	lasagnes
+fettuccine	les	fettuccine
+noodles	les	nouilles
+
+Cereals (Céréales)
+English Word	French Prefix	French Noun
+cornflakes	les	cornflakes
+oatmeal	le	flocons d'avoine
+granola	le	granola
+muesli	le	muesli
+rice crispies	les	riz soufflé
+Sweets (Bonbons)
+English Word	French Prefix	French Noun
+chocolate	le	chocolat
+candy	le	bonbon
+lollipop	le	sucette
+gummy bears	les	oursons en gélatine
+marshmallows	les	guimauves
+Condiments (Condiments)
+English Word	French Prefix	French Noun
+salt	le	sel
+pepper	le	poivre
+mustard	la	moutarde
+ketchup	le	ketchup
+mayonnaise	la	mayonnaise
+vinegar	le	vinaigre
+olive oil	l'	huile d'olive
+soy sauce	la	sauce soja
+Nuts (Fruits secs)
+English Word	French Prefix	French Noun
+almonds	les	amandes
+cashews	les	noix de cajou
+walnuts	les	noix
+peanuts	les	arachides
+hazelnuts	les	noisettes
+Spices (Épices)
+English Word	French Prefix	French Noun
+cinnamon	la	cannelle
+ginger	le	gingembre
+turmeric	le	curcuma
+paprika	le	paprika
+chili powder	la	poudre de piment
+curry	le	curry
+Wine (Vin)
+English Word	French Prefix	French Noun
+red wine	le	vin rouge
+white wine	le	vin blanc
+rosé wine	le	vin rosé
+sparkling wine	le	vin pétillant
+champagne	le	champagne
+Coffee (Café)
+English Word	French Prefix	French Noun
+coffee beans	les	grains de café
+ground coffee	le	café moulu
+instant coffee	le	café soluble
+espresso	le	expresso
+cappuccino	le	cappuccino
+Chips (Chips)
+English Word	French Prefix	French Noun
+potato chips	les	chips
+tortilla chips	les	chips de maïs
+crisps	les	chips
+Health Foods (Aliments sains)
+English Word	French Prefix	French Noun
+quinoa	le	quinoa
+chia seeds	les	graines de chia
+almond butter	le	beurre d'amande
+goji berries	les	baies de goji
+coconut oil	l'	huile de coco
+Pet Food (Nourriture pour animaux)
+English Word	French Prefix	French Noun
+dog food	la	nourriture pour chien
+cat food	la	nourriture pour chat
+pet treats	les	friandises pour animaux
+birdseed	les	graines pour oiseaux

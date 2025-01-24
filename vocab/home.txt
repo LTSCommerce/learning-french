@@ -1,0 +1,183 @@
+# home words
+house	la	maison
+family	la	famille
+room	la	chambre
+door	la	porte
+window	la	fenêtre
+chair	la	chaise
+table	la	table
+bathroom	la	salle de bain
+garden	le	jardin
+floor	le	sol
+roof	le	toit
+wall	le	mur
+light	la	lumière
+fire	le	feu
+cupboard	le	placard
+stove	le	poêle
+
+# Rooms
+living room	le	salon
+bedroom	la	chambre
+kitchen	la	cuisine
+bathroom	la	salle de bain
+dining room	la	salle à manger
+hallway	le	couloir
+attic	le	grenier
+basement	le	sous-sol
+laundry room	la	buanderie
+office	le	bureau
+garage	le	garage
+balcony	le	balcon
+porch	le	porche
+cellar	la	cave
+
+#Living Room
+sofa	le	canapé
+armchair	le	fauteuil
+coffee table	la	table basse
+television	la	télévision
+rug	le	tapis
+bookshelf	l'	étagère
+lamp	la	lampe
+curtains	les	rideaux
+picture frame	le	cadre
+
+#Bedroom
+bed	le	lit
+mattress	le	matelas
+pillow	un	oreiller
+blanket	la	couverture
+wardrobe	une	armoire
+dresser	la	commode
+nightstand	la	table de nuit
+lamp	la	lampe
+mirror	le	miroir
+alarm clock	le	réveil
+
+#Kitchen
+fridge	le	réfrigérateur
+stove	le	poêle
+oven	le	four
+sink	un	évier
+microwave	le	micro-ondes
+cupboard	le	placard
+kettle	la	bouilloire
+dish rack	le	égouttoir
+cutting board	la	planche à découper
+pot	la	casserole
+
+#Bathroom
+toilet	les(f)	toilettes
+shower	la	douche
+bath	le	bain
+sink	le	lavabo
+mirror	le	miroir
+towel	la	serviette
+soap	le	savon
+toothbrush	la	brosse à dents
+toothpaste	le	dentifrice
+shampoo	le	shampooing
+
+#Dining Room
+dining table	la	table à manger
+chair	la	chaise
+placemat	le	set de table
+cutlery	un	couverts
+plate	une	assiette
+glass	le	verre
+bowl	le	bol
+tablecloth	la	nappe
+chandelier	le	lustre
+
+#Hallway
+coat rack	le	porte-manteau
+shoe	une	chaussure
+mirror	le	miroir
+umbrella	le	parapluie
+doormat	le	paillasson
+
+#Attic
+box	la	boîte
+suitcase	la	valise
+chest	le	coffre
+insulation	une	isolation
+ladder	une	échelle
+
+#Basement
+furnace	le	fourneau
+washing machine	la	machine à laver
+dryer	le	sèche-linge
+tool	un	outil
+workbench	le	établi
+storage	le	stockage
+
+#Laundry Room
+washing machine	la	machine à laver
+dryer	le	sèche-linge
+ironing board	la	planche à repasser
+detergent	le	détergent
+clothes basket	le	panier à linge
+clothes peg	le	pince à linge
+
+#Office
+desk	le	bureau
+chair	la	chaise
+computer	un	ordinateur
+printer	une	imprimante
+file cabinet	le	cabinet
+bookshelf	une	étagère
+notepad	le	bloc-notes
+pen	le	stylo
+
+#Garage
+car	la	voiture
+bicycle	le	vélo
+tool	un	outil
+workbench	le	établi
+shelf	une	étagère
+
+
+# Balcony
+chair	la	chaise
+table	la	table
+plant pot	le	pot de fleurs
+railing	le	rambarde
+umbrella	le	parasol
+
+# Porch
+rocking chair	le	fauteuil à bascule
+doormat	le	paillasson
+light	la	lumière
+potted plant	le	plante en pot
+
+# Cellar
+wine	le	vin
+jar	le	pot
+bottle	la	bouteille
+crate	le	caisse
+
+# Garden
+plant	la	plante
+flower	la	fleur
+tree	un	arbre
+bush	le	buisson
+grass	le	herbe
+lawn	le	pelouse
+vegetable	le	légume
+fruit	le	fruit
+seed	la	graine
+pot	le	pot
+watering can	un	arrosoir
+rake	le	râteau
+shovel	la	pelle
+spade	la	bêche
+hose	le	tuyau d'arrosage
+fence	la	clôture
+shed	le	cabanon
+wheelbarrow	la	brouette
+compost	le	compost
+hedge	la	haie
+garden chair	la	chaise de jardin
+birdbath	le	bain d'oiseaux
+greenhouse	la	serre

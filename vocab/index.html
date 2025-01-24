@@ -494,28 +494,8 @@ woman une femme"></textarea>
                             const lines = text.split('\n');
 
                             lines.forEach(line => {
-                                line = line.trim();
-                                if (!line) return; // Skip empty lines
-
-                                const parts = line.split(' ');
-                                if (parts.length < 3) {
-                                    console.warn("Invalid line format: ", line);
-                                    displayErrorMessage(
-                                        "Invalid line format in file. Please use 'english prefix french'. See console for more."
-                                    );
-                                    return;
-                                }
-
-                                const englishWord = parts[0].trim();
-                                const prefix = parts[1].trim().toLowerCase();
-                                const frenchWord = parts.slice(2).join(' ').trim(); // Handle multi-word French nouns
-
-                                const validPrefixes = ["le", "la", "un", "une"];
-                                if (!validPrefixes.includes(prefix)) {
-                                    console.warn("Invalid prefix: ", prefix, " in line: ", line);
-                                    displayErrorMessage(
-                                        "Invalid gender prefix in file. Valid prefixes are: le, la, un, une. See console for more."
-                                    );
+                                parsed = splitLine(line)
+                                if(parsed === null){
                                     return;
                                 }
                                 validLines.push(line);
@@ -548,31 +528,32 @@ woman une femme"></textarea>
                 // ------------------------------------------------------------------------
 
                 // Function to generate the HTML content for a slide
-                function generateSlideContent(englishWord, wordWithOne, wordWithDefiniteArticle, possessiveArticle,
+                function generateSlideContent(englishWord, isPlural, wordWithDefiniteArticle, possessiveArticle,
                     frenchWord, guessableText) {
-                    // 2. Linguee Link
-                    const lingueeURL =
-                        `https://www.linguee.com/french-english/search?source=auto&query=${encodeURIComponent(frenchWord)}`;
-
-                    // 3. Interactive English Word Reveal
+                    
                     const englishWordDisplay = `<span class="english-word hidden" data-revealed="false">${englishWord}</span>`;
 
                     // Construct the URLs
-                    const googleTranslateURL =
-                        `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate}`;
+                    const googleTranslateURL = `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate}`;
                     const wordReferenceURL = `https://www.wordreference.com/fren/${encodeURIComponent(frenchWord)}`;
                     const forvoURL = `https://forvo.com/word/${encodeURIComponent(frenchWord)}/#fr`;
+                    const lingueeURL = `https://www.linguee.com/french-english/search?source=auto&query=${encodeURIComponent(frenchWord)}`;
 
-                    // Gender Guessing Link
-                    const genderGuessingURL = "https://mangolanguages.com/resources/learn/grammar/french/how-to-determine-the-gender-of-nouns-in-french";
+                    const frenchWords=isPlural
+                    ?`
+                        <p>${wordWithDefiniteArticle}</p>
+                    `
+                    :`
+                        <p>${wordWithOne}</p>
+                        <p>${wordWithDefiniteArticle}</p>
+                        <p>${possessiveArticle} ${frenchWord}</p>
+                    `
 
                     return `
                     <div class="text-container">
                         <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
-                        <p>${wordWithOne}</p>
-                        <p>${wordWithDefiniteArticle}</p>
-                        <p>${possessiveArticle} ${frenchWord}</p>
-                        <p>${guessableText} - <a href="${genderGuessingURL}" target="_blank">Learn more</a></p>
+                        
+                        <p>${guessableText} - <a href="#guessable-rules">Learn more</a></p>
                         <div class="slide-buttons">
                             <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
                             <a href="${wordReferenceURL}" target="_blank">WordReference</a>
@@ -611,7 +592,7 @@ woman une femme"></textarea>
                     const signal = abortController.signal;
 
                     // Display "Loading image..." placeholder
-                    updateSlideWithPlaceholder(slide, "Loading image...");
+                    updateSlideWithPlaceholder(slide, "...");
 
                     let imageURL = getLocalStorageItem(frenchWord);
                     const imageBlacklist = getImageBlacklist();
@@ -699,56 +680,79 @@ woman une femme"></textarea>
                     slide.find('.image-placeholder').html(content); // Set the placeholder text
                 }
 
+                function splitLine(line) {
+                    // Trim the line to remove leading/trailing spaces
+                    const trimmedLine = line.trim();
+
+                    // Return null for empty or commented-out lines (starting with #)
+                    if (trimmedLine === "" || trimmedLine.startsWith("#")) {
+                        return null;
+                    }
+
+                    // Regular expression to match the line format
+                    const regex = /^(.+?)\s+(la|le|un|une|les\(m\)|les\(f\))))\s+(.+)$/i;
+
+                    // Attempt to match the line against the regex
+                    const match = trimmedLine.match(regex);
+
+                    if (match) {
+                        // Destructure the matched groups into components
+                        const [_, englishPhrase, genderPrefix, frenchPhrase] = match;
+                        return {
+                        englishPhrase: englishPhrase.trim(),
+                        genderPrefix: genderPrefix.trim(),
+                        frenchPhrase: frenchPhrase.trim()
+                        };
+                    } else {
+                        // Log an error if the line is invalid
+                        console.error("Invalid line format:", line);
+                        return null;
+                    }
+                }
+
                 // Function to generate a single slide
-                async function generateSlide(line) {
-                    line = line.trim();
-                    if (!line) return null; // Skip empty lines
-
-                    const parts = line.split(' ');
-                    if (parts.length < 3) {
-                        console.warn("Invalid line format: ", line);
-                        displayErrorMessage(
-                            "Invalid line format. Please use 'english prefix french'. See console for more.");
+                async function generateSlide(line) {                    
+                    parsed=splitLine(line);
+                    if(null===parse){
                         return null;
                     }
+                    const englishWord = parsed.englishPhrase;
+                    const prefix = parsed.genderPrefix;
+                    const frenchWord = parsed.frenchPhrase;
 
-                    const englishWord = parts[0].trim();
-                    const prefix = parts[1].trim().toLowerCase();
-                    const frenchWord = parts.slice(2).join(' ').trim(); // Handle multi-word French nouns
-
-                    const validPrefixes = ["le", "la", "un", "une"];
-                    if (!validPrefixes.includes(prefix)) {
-                        console.warn("Invalid prefix: ", prefix, " in line: ", line);
-                        displayErrorMessage("Invalid gender prefix. Valid prefixes are: le, la, un, une. See console for more.");
-                        return null;
-                    }
-
-                    let genderClass = 'neutral';
-                    if (["le", "un"].includes(prefix)) {
+                    if (["le", "un", "les(m)"].includes(prefix)) {
                         genderClass = 'masculine';
-                    } else if (["la", "une"].includes(prefix)) {
+                    } else if (["la", "une", "les(f)"].includes(prefix)) {
                         genderClass = 'feminine';
                     }
 
-                    let definiteArticle = (prefix === "un" || prefix === "une") ? "" : prefix; // initailise as before
+                    const isPlural=(["les(m)","les(f)"].includes(prefix));
 
-                    const startsWithVowelOrH = /^[aeiouh]/i.test(frenchWord); // use regex
-
-                    if (startsWithVowelOrH && (prefix === "le" || prefix === "la")) {
-                        definiteArticle = "l'"; // Contract the article
-                    } else {
-                        definiteArticle = prefix;
+                    let definiteArticle=prefix;
+                    if (definiteArticle==="un"){
+                        definiteArticle="le";
+                    }else if (definiteArticle="une"){
+                        definiteArticle="la";
                     }
 
+                    const startsWithVowelOrH = /^[aeiouh]/i.test(frenchWord);
+
+                    if (!isPlural && !startsWithVowelOrH && (definiteArticle === "le" || definiteArticle === "la")) {
+                        definiteArticle = "l'"; // Contract the article
+                    } else {
+                        definiteArticle = `definiteArticle `; // add a space
+                    }
+
+                    
                     const possessiveArticle = (genderClass === 'masculine') ? "son" : "ta";
-                    const wordWithDefiniteArticle = definiteArticle + " " + frenchWord;
+                    const wordWithDefiniteArticle = definiteArticle + frenchWord;
                     const wordWithOne = (genderClass === 'masculine') ? "un " + frenchWord : "une " + frenchWord;
 
                     const guessable = isGuessable(frenchWord, prefix);
                     let guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
 
                     // Image Handling - Store English word for later loading
-                    const slideContent = generateSlideContent(englishWord, wordWithOne, wordWithDefiniteArticle,
+                    const slideContent = generateSlideContent(englishWord, isPlural, wordWithDefiniteArticle,
                         possessiveArticle, frenchWord, guessableText); // No image URL initially
 
                     const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}" data-ever-revealed="false">${slideContent}</div>`);
