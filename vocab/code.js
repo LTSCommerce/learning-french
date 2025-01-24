@@ -125,9 +125,9 @@
 
             // Determine actual gender from prefix
             let actualGender = null;
-            if (["le", "un"].includes(prefix)) {
+            if (["le", "un", "les(m)"].includes(prefix)) {
                 actualGender = 'masculine';
-            } else if (["la", "une"].includes(prefix)) {
+            } else if (["la", "une", "les(f)"].includes(prefix)) {
                 actualGender = 'feminine';
             } else {
                 console.warn("Unexpected prefix:", prefix); // Should not happen due to validation
