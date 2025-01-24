@@ -1,0 +1,95 @@
+# Adulting
+
+# Driving
+car une voiture  
+steering wheel un volant  
+seatbelt une ceinture de sécurité  
+gearbox une boîte de vitesses  
+brake un frein  
+accelerator un accélérateur  
+clutch un embrayage  
+dashboard un tableau de bord  
+rear-view mirror un rétroviseur  
+side mirror un rétroviseur latéral  
+tyre un pneu  
+wheel une roue  
+door une porte  
+window une fenêtre  
+key une clé  
+headlight un phare  
+indicator un clignotant  
+bonnet un capot  
+boot un coffre  
+windscreen un pare-brise  
+fuel tank un réservoir  
+gear une vitesse  
+traffic light un feu de signalisation  
+pedestrian crossing un passage piéton  
+roundabout un rond-point  
+road une route  
+motorway une autoroute  
+junction une intersection 
+
+# Work and Career:
+job un emploi
+profession une profession
+office un bureau
+meeting une réunion
+CV un CV
+promotion une promotion
+colleague un/une collègue
+interview un entretien
+
+# Finance and Money:
+bank une banque
+account un compte
+loan un prêt
+savings les(f) économies
+investment un investissement
+bill une facture
+credit card une carte de crédit
+debt une dette
+
+# Household and Living:
+furniture un meuble
+appliance un appareil
+cleaning une nettoyage
+tool un outil
+laundry une lessive
+garbage un déchet
+vacuum cleaner un aspirateur
+kitchen une cuisine
+
+# Relationships:
+male friend un ami
+female friend une amie
+family une famille
+male partner un partenaire
+female partner une partenaire
+male parent un parent
+femail parent une parent
+marriage un mariage
+male child un enfant
+female child une enfant
+divorce un divorce
+couple un couple
+
+# Food and Cooking:
+grocery un aliment
+meal un repas
+recipe une recette
+restaurant un restaurant
+oven un four
+fridge un réfrigérateur
+plate une assiette
+ingredient un ingrédient
+
+# Health and Well-being:
+male doctor un médecin
+female doctor une médecin
+fitness un fitness
+medicine un médicament
+hospital un hôpital
+appointment un rendez-vous
+exercise un exercice
+health la santé
