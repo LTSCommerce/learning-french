@@ -193,10 +193,10 @@
         function compareStringsIgnoreAccents(englishWord,frenchWord) {
             // Normalize both strings by removing accents and converting to lowercase
             let normalizedStr1 = englishWord
-                .str.replace(/^(male |female )/, '')
+                .replace(/^(male |female )/, '')
                 .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                 .toLowerCase();
-                
+
             let normalizedStr2 = frenchWord
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
