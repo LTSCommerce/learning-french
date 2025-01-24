@@ -1,0 +1,265 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+#container {
+    width: 80%;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Input Area Styles */
+#input-area {
+    margin-bottom: 20px;
+}
+
+#word-list {
+    height: 200px;
+    /* Fixed height for the textarea */
+}
+
+#load-list-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Slideshow Container Styles */
+#slideshow-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    display: none;
+    /* flex-direction: column; */
+    margin-bottom: 20px;
+    height: 400px;
+    /* Fixed height for the slideshow container */
+}
+
+.slide {
+    width: 100%;
+    position: absolute;
+    /* Changed from flex to absolute */
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    height: 400px;
+    /* Fixed height for the slide */
+}
+
+.slide.active {
+    opacity: 1;
+    position: relative;
+    /* added */
+    z-index: 2;
+    /* added */
+}
+
+/* Gender-based color schemes */
+.slide.masculine {
+    background: linear-gradient(to bottom, #64b5f6, #2196f3);
+    /* Blueish */
+}
+
+.slide.feminine {
+    background: linear-gradient(to bottom, #f48fb1, #e91e63);
+    /* Pinkish */
+}
+
+.slide.neutral {
+    background: linear-gradient(to bottom, #a1887f, #795548);
+    /* Brownish */
+}
+
+/* Navigation Buttons Styles */
+#navigation-buttons {
+    text-align: center;
+    margin-top: 10px;
+    display: none;
+}
+
+#edit-button {
+    margin-top: 10px;
+}
+
+/* English Word Styles */
+.english-word {
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    /* Indicate it's clickable */
+    user-select: none;
+    /* Prevent text selection during double click */
+}
+
+.english-word.hidden {
+    color: transparent;
+    /* Hide the text */
+}
+
+.english-word.hidden::before {
+    content: "??????";
+    /* Placeholder - adjust length as needed */
+    color: rgba(255, 255, 255, 0.5);
+    /* Faded question marks */
+}
+
+/* Guessable Rules Styles */
+#guessable-rules {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    text-align: center;
+    display: none;
+    /* Initially hidden */
+}
+
+#guessable-rules a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+#guessable-rules a:hover {
+    text-decoration: underline;
+}
+
+/* Slide Buttons Styles */
+.slide-buttons {
+    margin-top: 15px;
+    display: none;
+    /* Hide buttons by default */
+}
+
+.slide.active .slide-buttons {
+    display: block !important;
+    /* Override any other display rules */
+}
+
+.slide-buttons a {
+    display: inline-block;
+    padding: 6px 10px;
+    /* Reduced padding */
+    margin: 0 3px;
+    /* Reduced margin */
+    background-color: #ddd;
+    /* Light gray background */
+    color: #333;
+    /* Dark gray text */
+    text-decoration: none;
+    border-radius: 4px;
+    /* Slightly smaller border radius */
+    font-size: 0.9em;
+    /* Smaller font size */
+    border: none;
+    /* Removed border */
+}
+
+.slide-buttons a:hover {
+    background-color: #ccc;
+    /* Slightly darker gray on hover */
+}
+
+/* Image Styles */
+.pixabay-image {
+    max-width: 80%;
+    max-height: 300px;
+    object-fit: contain;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.image-placeholder {
+    width: 300px;
+    height: 300px;
+    background-color: #eee;
+    border: 1px dashed #999;
+    color: #777;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    font-size: 5em;
+    /* Make the question mark bigger */
+    margin-left: 20px;
+}
+
+/* Text container to take up remaining space */
+.text-container {
+    flex-grow: 1;
+    /* Allows the text container to fill the remaining space */
+    text-align: center;
+    /* Center the text within the container */
+}
+
+/* Delete Image Button Styles */
+.delete-image-button {
+    background-color: #f44336;
+    /* Red */
+    color: white;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    margin-left: 5px;
+}
+
+.delete-image-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Error Message Styles */
+#error-message {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Clear List Button Styles */
+#clear-list-button {
+    margin-top: 10px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    #container {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .slide {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        height: 500px;
+        /* Adjusted height for smaller screens */
+    }
+
+    #slideshow-container {
+        height: 500px;
+        /* Adjusted height for smaller screens */
+    }
+
+    .image-placeholder {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}
