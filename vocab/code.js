@@ -377,7 +377,7 @@
             if (isCognate(englishWord, frenchWord)) {
                 cognate = ' cognate! ';
             }
-            const englishWordDisplay = `<span class="english-word hidden" data-revealed="false">${englishWord} ${cognate}</span>`;
+            const englishWordDisplay = `<div class="english-word hidden" data-revealed="false">${englishWord} <span class="cognate">${cognate}</span></div>`;
 
             // Construct the URLs
             const googleTranslateURL = `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate}`;
@@ -396,7 +396,7 @@
                    <p>${prfxYour} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxYour} ${frenchWord}">🔊</button></p>
                    <p>${prfxMy} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxMy} ${frenchWord}">🔊</button></p>
                    <p>${prfxThisthat} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxThisthat} ${frenchWord}">🔊</button></p>
-                   <p>${prfxSome} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxSome} ${frenchWord}">🔊</button></p>`;
+                   <p>${prfxSome}${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxSome}${frenchWord}">🔊</button></p>`;
 
             return `
     <div class="text-container">
@@ -601,8 +601,8 @@
                 ? (startsWithVowelOrH ? "cet" : "ce")
                 : "cette";
             const prfxSome = (genderClass === "masculine")
-                ? "du"
-                : (startsWithVowelOrH ? "de l'" : "de la")
+                ? "du "
+                : (startsWithVowelOrH ? "de l'" : "de la ")
 
             const guessable = isGuessable(frenchWord, prefix);
             let guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";

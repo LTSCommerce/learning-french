@@ -119,24 +119,7 @@ body {
         user-select: text;  /* Allow users to select and copy the text */
         height: 6em;
 }
-  
-  .cognate {
-    font-size: 2rem;
-    font-weight: bold;
-    font-style: italic;
-    background: linear-gradient(45deg, #ff007f, #00d4ff, #ff00b3);
-    background-size: 400% 400%;
-    color: #fff;
-    -webkit-background-clip: text;
-    background-clip: text;
-    display: inline-block;
-  }
 
-  .english-word.hidden.cognate {
-    color: transparent;
-    /* Hide the text */
-}
-  
 
 /* English Word Styles */
 .english-word {
@@ -158,6 +141,16 @@ body {
     /* Placeholder - adjust length as needed */
     color: rgba(255, 255, 255, 0.5);
     /* Faded question marks */
+}
+
+.cognate{
+    font-style: italic;
+    color:white;
+}
+
+.english-word.hidden > .cognate{
+    color: transparent;
+    /* Hide the text */
 }
 
 /* Guessable Rules Styles */
