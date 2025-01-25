@@ -1,6 +1,6 @@
 (function () { // Start of IIFE
 
-    $(document).ready(function () {
+    $(document).ready(async function () {
 
         // ------------------------------------------------------------------------
         // Configuration
@@ -43,6 +43,123 @@
         let currentSlideIndex = 0;
         let imageLoadFailures = 0;
         let imageLoadingEnabled = true;
+        let maleVoice = null;
+        let femaleVoice = null;
+        const voices = await loadVoices();
+
+        // Define the localConfig object and helper functions
+        const localConfig = {
+            key: 'appConfig',
+            data: {
+                maleVoice: null,
+                femaleVoice: null
+            },
+            load() {
+                const storedConfig = getLocalStorageItem(this.key)
+                console.log({storedConfig: storedConfig});
+                if (storedConfig) {
+                    try {
+                        const parsedConfig = JSON.parse(storedConfig);
+                        this.data.maleVoice = parsedConfig.maleVoice;
+                        this.data.femaleVoice = parsedConfig.femaleVoice;
+                    } catch (e) {
+                        console.error("Error parsing storedConfig:", e);
+                        console.debug(storedConfig)
+                    }
+                }
+            },
+            save() {
+                const configToSave = {
+                    maleVoice: this.data.maleVoice ? {
+                        name: this.data.maleVoice.name,
+                        lang: this.data.maleVoice.lang,
+                        voiceURI: this.data.maleVoice.voiceURI
+                    } : null,
+                    femaleVoice: this.data.femaleVoice ? {
+                        name: this.data.femaleVoice.name,
+                        lang: this.data.femaleVoice.lang,
+                        voiceURI: this.data.femaleVoice.voiceURI
+                    } : null
+                };
+                console.log('saving to local storage:', configToSave);
+                setLocalStorageItem(this.key, JSON.stringify(configToSave))
+            }
+        };
+
+
+        async function loadVoices() {
+            return new Promise((resolve) => {
+                let voices = window.speechSynthesis.getVoices();
+                if (voices.length !== 0) {
+                    resolve(voices.filter(voice => voice.lang === 'fr-FR'));
+                } else {
+                    window.speechSynthesis.onvoiceschanged = () => {
+                        voices = window.speechSynthesis.getVoices();
+                        resolve(voices.filter(voice => voice.lang === 'fr-FR'));
+                    };
+                }
+            });
+        }
+
+        // ------------------------------------------------------------------------
+        // Helper Functions - Speech
+        // ------------------------------------------------------------------------
+
+
+// Populate voice pickers and set default voices from localConfig
+        function populateVoicePickers(voices) {
+            const maleVoiceSelect = $("#male-voice-select");
+            const femaleVoiceSelect = $("#female-voice-select");
+
+            voices.forEach(voice => {
+                const option = `<option value="${voice.name}">${voice.name}</option>`;
+                maleVoiceSelect.append(option);
+                femaleVoiceSelect.append(option);
+            });
+
+            // Set default voices from localConfig
+            if (localConfig.data.maleVoice && localConfig.data.maleVoice.name) {
+                console.log('found local config for maleVoice', localConfig.data.maleVoice);
+                maleVoiceSelect.val(localConfig.data.maleVoice.name);
+                maleVoice = voices.find(voice => voice.name === localConfig.data.maleVoice.name);
+            } else {
+                const defaultMaleVoice = voices.find(voice => voice.name.includes("+male"));
+                if (defaultMaleVoice) {
+                    maleVoiceSelect.val(defaultMaleVoice.name);
+                    maleVoice = defaultMaleVoice;
+                    localConfig.data.maleVoice = defaultMaleVoice;
+                }
+            }
+
+            if (localConfig.data.femaleVoice && localConfig.data.femaleVoice.name) {
+                console.log('found local config for femaleVoice', localConfig.data.femaleVoice);
+                femaleVoiceSelect.val(localConfig.data.femaleVoice.name);
+                femaleVoice = voices.find(voice => voice.name === localConfig.data.femaleVoice.name);
+            } else {
+                const defaultFemaleVoice = voices.find(voice => voice.name.includes("+female"));
+                if (defaultFemaleVoice) {
+                    femaleVoiceSelect.val(defaultFemaleVoice.name);
+                    femaleVoice = defaultFemaleVoice;
+                    localConfig.data.femaleVoice = defaultFemaleVoice;
+                }
+            }
+
+            localConfig.save();
+        }
+
+        // Play voice sample in voice picker
+        function playVoiceSample(voice) {
+            const utterance = new SpeechSynthesisUtterance(`Bonjour, je m'appelle ${voice.name}`);
+            utterance.voice = voice;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Function to read out french words on slides
+        function speak(text, gender) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = gender === 'masculine' ? maleVoice : femaleVoice;
+            window.speechSynthesis.speak(utterance);
+        }
 
         // ------------------------------------------------------------------------
         // Helper Functions - Local Storage
@@ -113,8 +230,7 @@
 
             if (lowerCaseWord.endsWith('e') || lowerCaseWord.endsWith('ion')) {
                 // Likely feminine, unless it's an exception
-                if (lowerCaseWord.endsWith('age') || lowerCaseWord.endsWith('ege') || lowerCaseWord.endsWith('é') ||
-                    lowerCaseWord.endsWith('isme')) {
+                if (lowerCaseWord.endsWith('age') || lowerCaseWord.endsWith('ege') || lowerCaseWord.endsWith('é') || lowerCaseWord.endsWith('isme')) {
                     expectedGender = 'masculine'; // Exception: Likely masculine
                 } else {
                     expectedGender = 'feminine'; // Likely feminine
@@ -162,7 +278,7 @@
 
                     lines.forEach(line => {
                         parsed = splitLine(line)
-                        if(parsed === null){
+                        if (parsed === null) {
                             return;
                         }
                         validLines.push(line);
@@ -190,32 +306,33 @@
             }
         }
 
-        function compareStringsIgnoreAccents(englishWord,frenchWord) {
-            // Normalize both strings by removing accents and converting to lowercase
-            let normalizedStr1 = englishWord
-                .replace(/^(male |female )/, '')
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase();
-
-            let normalizedStr2 = frenchWord
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase();
-        
-            return normalizedStr1 === normalizedStr2;
-        }
 
         // ------------------------------------------------------------------------
         // Helper Functions - Slide Generation
         // ------------------------------------------------------------------------
 
-        // Function to generate the HTML content for a slide
-        function generateSlideContent(englishWord, isPlural, wordWithOne,wordWithDefiniteArticle, possessiveArticle,
-            frenchWord, guessableText) {            
+        // word comparison, checking for cognate
+        function isCognate(englishWord, frenchWord) {
+            // Normalize both strings by removing accents and converting to lowercase
+            let engNormal = englishWord
+                .replace(/^(male |female )/, '')
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase();
 
-            let cognate='';
-            if(compareStringsIgnoreAccents(englishWord,frenchWord)){
-                cognate=' cognate! ';
+            let frNormal = frenchWord
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase();
+
+            return engNormal === frNormal;
+        }
+
+
+        // Function to generate the HTML content for a slide
+        function generateSlideContent(englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxSome, frenchWord, guessableText) {
+            let cognate = '';
+            if (isCognate(englishWord, frenchWord)) {
+                cognate = ' cognate! ';
             }
             const englishWordDisplay = `<span class="english-word hidden" data-revealed="false">${englishWord} ${cognate}</span>`;
 
@@ -225,31 +342,29 @@
             const forvoURL = `https://forvo.com/word/${encodeURIComponent(frenchWord)}/#fr`;
             const lingueeURL = `https://www.linguee.com/french-english/search?source=auto&query=${encodeURIComponent(frenchWord)}`;
 
-            const frenchWords=isPlural
-            ?`
-                <p>${wordWithDefiniteArticle}</p>
-            `
-            :`
-                <p>${wordWithOne}</p>
-                <p>${wordWithDefiniteArticle}</p>
-                <p>${possessiveArticle} ${frenchWord}</p>
-            `
+            const frenchWords = isPlural
+                ? `<p>${wordWithDefiniteArticle} <button class="speak-button" data-gender="${genderClass}" data-text="${wordWithDefiniteArticle}">🔊</button></p>`
+                : `<p>${prfxOne} ${frenchWord}<button class="speak-button" data-gender="${genderClass}" data-text="${prfxOne} ${frenchWord}">🔊</button></p>
+                   <p>${wordWithDefiniteArticle} <button class="speak-button" data-gender="${genderClass}" data-text="${wordWithDefiniteArticle}">🔊</button></p>
+                   <p>${prfxYour} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxYour} ${frenchWord}">🔊</button></p>
+                   <p>${prfxMy} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxMy} ${frenchWord}">🔊</button></p>
+                   <p>${prfxSome} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxSome} ${frenchWord}">🔊</button></p>`;
 
             return `
-            <div class="text-container">
-                <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
-                ${frenchWords}
-                <p>${guessableText} - <a href="#guessable-rules">Learn more</a></p>
-                <div class="slide-buttons">
-                    <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
-                    <a href="${wordReferenceURL}" target="_blank">WordReference</a>
-                    <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
-                    <a href="${lingueeURL}" target="_blank">Linguee</a>
-                    <button class="delete-image-button" data-frenchword="${frenchWord}">Delete Image</button>
-                </div>
-            </div>
-            <div class="image-placeholder">?</div>
-        `;
+    <div class="text-container">
+        <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
+        ${frenchWords}
+        <p>${guessableText} - <a href="#guessable-rules">Learn more</a></p>
+        <div class="slide-buttons">
+            <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
+            <a href="${wordReferenceURL}" target="_blank">WordReference</a>
+            <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
+            <a href="${lingueeURL}" target="_blank">Linguee</a>
+            <button class="delete-image-button" data-frenchword="${frenchWord}">Delete Image</button>
+        </div>
+    </div>
+    <div class="image-placeholder">?</div>
+    `;
         }
 
         async function loadImageForSlide(slide) {
@@ -385,9 +500,9 @@
                 // Destructure the matched groups into components
                 const [_, englishPhrase, genderPrefix, frenchPhrase] = match;
                 return {
-                englishPhrase: englishPhrase.trim(),
-                genderPrefix: genderPrefix.trim(),
-                frenchPhrase: frenchPhrase.trim()
+                    englishPhrase: englishPhrase.trim(),
+                    genderPrefix: genderPrefix.trim(),
+                    frenchPhrase: frenchPhrase.trim()
                 };
             } else {
                 // Log an error if the line is invalid
@@ -397,9 +512,9 @@
         }
 
         // Function to generate a single slide
-        async function generateSlide(line) {                    
-            parsed=splitLine(line);
-            if(null===parsed){
+        async function generateSlide(line) {
+            parsed = splitLine(line);
+            if (null === parsed) {
                 return null;
             }
             const englishWord = parsed.englishPhrase;
@@ -412,13 +527,13 @@
                 genderClass = 'feminine';
             }
 
-            const isPlural=(["les(m)","les(f)"].includes(prefix));
+            const isPlural = (["les(m)", "les(f)"].includes(prefix));
 
-            let definiteArticle=prefix;
-            if (definiteArticle==="un"){
-                definiteArticle="le";
-            }else if (definiteArticle="une"){
-                definiteArticle="la";
+            let definiteArticle = prefix;
+            if (definiteArticle === "un") {
+                definiteArticle = "le";
+            } else if (definiteArticle === "une") {
+                definiteArticle = "la";
             }
 
             const startsWithVowelOrH = /^[aeiouh]/i.test(frenchWord);
@@ -429,17 +544,18 @@
                 definiteArticle = `${definiteArticle} `; // add a space
             }
 
-            
-            const possessiveArticle = (genderClass === 'masculine') ? "son" : "ta";
+
+            const prfxYour = (genderClass === 'masculine') ? "ton" : "ta";
+            const prfxMy = (genderClass === 'masculine') ? "mon" : "ma";
             const wordWithDefiniteArticle = definiteArticle + frenchWord;
-            const wordWithOne = (genderClass === 'masculine') ? "un " + frenchWord : "une " + frenchWord;
+            const prfxOne = (genderClass === 'masculine') ? "un" : "une";
+            const prfxSome = (genderClass === "masculine") ? "ce" : "cette";
 
             const guessable = isGuessable(frenchWord, prefix);
             let guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
 
             // Image Handling - Store English word for later loading
-            const slideContent = generateSlideContent(englishWord, isPlural, wordWithOne, wordWithDefiniteArticle,
-                possessiveArticle, frenchWord, guessableText); // No image URL initially
+            const slideContent = generateSlideContent(englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxSome, frenchWord, guessableText); // No image URL initially
 
             const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}" data-ever-revealed="false">${slideContent}</div>`);
 
@@ -544,6 +660,13 @@
             generateSlideshow(wordList);
         });
 
+        // Speak Button Click
+        dom.slideshowContainer.on("click", ".speak-button", function () {
+            const text = $(this).data("text");
+            const gender = $(this).data("gender");
+            speak(text, gender);
+        });
+
         // Edit Button Click
         dom.editButton.click(function () {
             dom.slideshowContainer.hide();
@@ -614,10 +737,39 @@
             }
         });
 
+        // Handle voice picker changes
+        $("#male-voice-select").change(function () {
+            const selectedVoiceName = $(this).val();
+            maleVoice = voices.find(voice => voice.name === selectedVoiceName);
+            localConfig.data.maleVoice = maleVoice;
+            localConfig.save();
+            playVoiceSample(maleVoice);
+        });
+
+        $("#female-voice-select").change(function () {
+            const selectedVoiceName = $(this).val();
+            femaleVoice = voices.find(voice => voice.name === selectedVoiceName);
+            localConfig.data.femaleVoice = femaleVoice;
+            localConfig.save();
+            playVoiceSample(femaleVoice);
+        });
+
+        // Handle play button clicks
+        $("#male-voice-play").click(function () {
+            playVoiceSample(maleVoice);
+        });
+
+        $("#female-voice-play").click(function () {
+            playVoiceSample(femaleVoice);
+        });
+
 
         // ------------------------------------------------------------------------
         // Initialization
         // ------------------------------------------------------------------------
+
+        // Load the configuration on page load
+        localConfig.load();
 
         // Populate the list selector
         config.availableLists.forEach(filename => {
@@ -627,7 +779,7 @@
         // Load list on button click
         dom.loadListButton.click(function () {
             const selectedFile = dom.listSelector.val();
-            loadListFromFile("./lists/"+selectedFile);
+            loadListFromFile("./lists/" + selectedFile);
         });
 
         // Load word list from local storage on page load
@@ -635,6 +787,8 @@
             dom.wordListTextarea.val(getLocalStorageItem(config.localStorageKey));
         }
 
+        // populate the voice pickers
+        populateVoicePickers(voices);
     });
 
 })(); // End of IIFE
