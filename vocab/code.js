@@ -12,6 +12,7 @@
             blacklistKey: "pixabayBlacklist",
             availableLists: ["list1.txt", "adulting.txt", "home.txt"], // Hardcoded list of available files
             maxImageLoadFailures: 5,
+            msBetweenWords: 200,
         };
 
         // ------------------------------------------------------------------------
@@ -87,6 +88,11 @@
         };
 
 
+        // ------------------------------------------------------------------------
+        // Helper Functions - Speech
+        // ------------------------------------------------------------------------
+
+
         async function loadVoices() {
             return new Promise((resolve) => {
                 let voices = window.speechSynthesis.getVoices();
@@ -101,17 +107,13 @@
             });
         }
 
-        // ------------------------------------------------------------------------
-        // Helper Functions - Speech
-        // ------------------------------------------------------------------------
-
-
 // Populate voice pickers and set default voices from localConfig
         function populateVoicePickers(voices) {
             const maleVoiceSelect = $("#male-voice-select");
             const femaleVoiceSelect = $("#female-voice-select");
-
+            console.log('voices', voices);
             voices.forEach(voice => {
+                console.log('adding voice to select', {voice: voice});
                 const option = `<option value="${voice.name}">${voice.name}</option>`;
                 maleVoiceSelect.append(option);
                 femaleVoiceSelect.append(option);
@@ -123,8 +125,13 @@
                 maleVoiceSelect.val(localConfig.data.maleVoice.name);
                 maleVoice = voices.find(voice => voice.name === localConfig.data.maleVoice.name);
             } else {
-                const defaultMaleVoice = voices.find(voice => voice.name.includes("+male"));
+                let defaultMaleVoice = voices.find(voice => voice.name.includes("+male"));
+                console.log('defaultMaleVoice', defaultMaleVoice)
+                if (defaultMaleVoice === undefined) {
+                    defaultMaleVoice = voices[0];
+                }
                 if (defaultMaleVoice) {
+                    console.log({defaultMaleVoice: defaultMaleVoice});
                     maleVoiceSelect.val(defaultMaleVoice.name);
                     maleVoice = defaultMaleVoice;
                     localConfig.data.maleVoice = defaultMaleVoice;
@@ -136,8 +143,12 @@
                 femaleVoiceSelect.val(localConfig.data.femaleVoice.name);
                 femaleVoice = voices.find(voice => voice.name === localConfig.data.femaleVoice.name);
             } else {
-                const defaultFemaleVoice = voices.find(voice => voice.name.includes("+female"));
+                let defaultFemaleVoice = voices.find(voice => voice.name.includes("+female"));
+                if (defaultFemaleVoice === undefined) {
+                    defaultFemaleVoice = voices[0];
+                }
                 if (defaultFemaleVoice) {
+                    console.log({defaultFemaleVoice: defaultFemaleVoice})
                     femaleVoiceSelect.val(defaultFemaleVoice.name);
                     femaleVoice = defaultFemaleVoice;
                     localConfig.data.femaleVoice = defaultFemaleVoice;
@@ -148,17 +159,49 @@
         }
 
         // Play voice sample in voice picker
-        function playVoiceSample(voice) {
+        function playVoiceSample(voice, gender) {
+            console.log('playing voice sample', {voice: voice});
+            if (voice === null) {
+                console.error('voice is null');
+                return;
+            }
             const utterance = new SpeechSynthesisUtterance(`Bonjour, je m'appelle ${voice.name}`);
             utterance.voice = voice;
+            utterance.pitch = gender === 'masculine' ? 0.8 : 1.5;
             window.speechSynthesis.speak(utterance);
         }
 
         // Function to read out french words on slides
         function speak(text, gender) {
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.voice = gender === 'masculine' ? maleVoice : femaleVoice;
+            const voice = gender === 'masculine' ? maleVoice : femaleVoice;
+            if (voice === null) {
+                console.error('voice is null');
+                return;
+            }
+            utterance.voice = voice
+            utterance.pitch = gender === 'masculine' ? 0.8 : 1.5;
             window.speechSynthesis.speak(utterance);
+        }
+
+        // Function to read out all French words on the slide
+        function autoPlaySlide(slide) {
+            const speakButtons = slide.find(".speak-button");
+            let allText = '';
+            let gender = '';
+
+            speakButtons.each(function () {
+                const button = $(this);
+                const text = button.data("text");
+                gender = button.data("gender"); // Assuming all buttons have the same gender
+                allText += text + '; '; // Double space between each chunk
+            });
+
+            // Trim the trailing spaces
+            allText = allText.trim();
+
+            // Call speak once with the concatenated text
+            speak(allText, gender);
         }
 
         // ------------------------------------------------------------------------
@@ -329,7 +372,7 @@
 
 
         // Function to generate the HTML content for a slide
-        function generateSlideContent(englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxSome, frenchWord, guessableText) {
+        function generateSlideContent(englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxThisthat, prfxSome, frenchWord, guessableText) {
             let cognate = '';
             if (isCognate(englishWord, frenchWord)) {
                 cognate = ' cognate! ';
@@ -343,17 +386,22 @@
             const lingueeURL = `https://www.linguee.com/french-english/search?source=auto&query=${encodeURIComponent(frenchWord)}`;
 
             const frenchWords = isPlural
-                ? `<p>${wordWithDefiniteArticle} <button class="speak-button" data-gender="${genderClass}" data-text="${wordWithDefiniteArticle}">🔊</button></p>`
+                ? `<p>les ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="les ${frenchWord}">🔊</button></p>
+                <p>tes ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="tes ${frenchWord}">🔊</button></p>
+                <p>mes ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="mes ${frenchWord}">🔊</button></p>
+                <p>ces ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="ces ${frenchWord}">🔊</button></p>
+                <p>des ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="des ${frenchWord}">🔊</button></p>`
                 : `<p>${prfxOne} ${frenchWord}<button class="speak-button" data-gender="${genderClass}" data-text="${prfxOne} ${frenchWord}">🔊</button></p>
                    <p>${wordWithDefiniteArticle} <button class="speak-button" data-gender="${genderClass}" data-text="${wordWithDefiniteArticle}">🔊</button></p>
                    <p>${prfxYour} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxYour} ${frenchWord}">🔊</button></p>
                    <p>${prfxMy} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxMy} ${frenchWord}">🔊</button></p>
+                   <p>${prfxThisthat} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxThisthat} ${frenchWord}">🔊</button></p>
                    <p>${prfxSome} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxSome} ${frenchWord}">🔊</button></p>`;
 
             return `
     <div class="text-container">
         <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
-        ${frenchWords}
+        <div class="french-words">${frenchWords}</div>
         <p>${guessableText} - <a href="#guessable-rules">Learn more</a></p>
         <div class="slide-buttons">
             <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
@@ -549,13 +597,18 @@
             const prfxMy = (genderClass === 'masculine') ? "mon" : "ma";
             const wordWithDefiniteArticle = definiteArticle + frenchWord;
             const prfxOne = (genderClass === 'masculine') ? "un" : "une";
-            const prfxSome = (genderClass === "masculine") ? "ce" : "cette";
+            const prfxThis = (genderClass === "masculine")
+                ? (startsWithVowelOrH ? "cet" : "ce")
+                : "cette";
+            const prfxSome = (genderClass === "masculine")
+                ? "du"
+                : (startsWithVowelOrH ? "de l'" : "de la")
 
             const guessable = isGuessable(frenchWord, prefix);
             let guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
 
             // Image Handling - Store English word for later loading
-            const slideContent = generateSlideContent(englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxSome, frenchWord, guessableText); // No image URL initially
+            const slideContent = generateSlideContent(englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxThis, prfxSome, frenchWord, guessableText); // No image URL initially
 
             const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}" data-ever-revealed="false">${slideContent}</div>`);
 
@@ -631,6 +684,10 @@
 
             if (!englishWordSpan.hasClass("hidden") || everRevealed) {
                 loadImageForSlide(currentSlide);
+            }
+            // Check if auto-play is enabled and read out all French words
+            if ($("#auto-play-checkbox").is(":checked")) {
+                autoPlaySlide(currentSlide);
             }
         }
 
@@ -741,26 +798,36 @@
         $("#male-voice-select").change(function () {
             const selectedVoiceName = $(this).val();
             maleVoice = voices.find(voice => voice.name === selectedVoiceName);
+            if (femaleVoice === null) {
+                console.error('Failed finding female voice', {selectedVoiceName: selectedVoiceName, voices: voices});
+                return;
+            }
+            console.log({maleVoice: maleVoice})
             localConfig.data.maleVoice = maleVoice;
             localConfig.save();
-            playVoiceSample(maleVoice);
+            playVoiceSample(maleVoice, 'masculine');
         });
 
         $("#female-voice-select").change(function () {
             const selectedVoiceName = $(this).val();
             femaleVoice = voices.find(voice => voice.name === selectedVoiceName);
+            if (femaleVoice === null) {
+                console.error('Failed finding female voice', {selectedVoiceName: selectedVoiceName, voices: voices});
+                return;
+            }
+            console.log({femaleVoice: femaleVoice})
             localConfig.data.femaleVoice = femaleVoice;
             localConfig.save();
-            playVoiceSample(femaleVoice);
+            playVoiceSample(femaleVoice, 'feminine');
         });
 
         // Handle play button clicks
         $("#male-voice-play").click(function () {
-            playVoiceSample(maleVoice);
+            playVoiceSample(maleVoice, 'masculine');
         });
 
         $("#female-voice-play").click(function () {
-            playVoiceSample(femaleVoice);
+            playVoiceSample(femaleVoice, 'feminine');
         });
 
 

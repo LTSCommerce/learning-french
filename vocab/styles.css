@@ -42,7 +42,7 @@ body {
     display: none;
     /* flex-direction: column; */
     margin-bottom: 20px;
-    height: 400px;
+    height: 70vh;
     /* Fixed height for the slideshow container */
 }
 
@@ -60,7 +60,7 @@ body {
     color: white;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
-    height: 400px;
+    height: 70vh;
     /* Fixed height for the slide */
 }
 
@@ -83,11 +83,17 @@ body {
     /* Pinkish */
 }
 
-.slide.neutral {
-    background: linear-gradient(to bottom, #a1887f, #795548);
-    /* Brownish */
+.french-words p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0;
+    font-size: 2em;
 }
 
+.french-words button {
+    margin-left: 10px;
+}
 /* Navigation Buttons Styles */
 #navigation-buttons {
     text-align: center;
@@ -134,7 +140,7 @@ body {
 
 /* English Word Styles */
 .english-word {
-    font-size: 1.5em;
+    font-size: 3em;
     font-weight: bold;
     cursor: pointer;
     /* Indicate it's clickable */
