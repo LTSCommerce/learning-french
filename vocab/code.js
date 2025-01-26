@@ -33,7 +33,8 @@
             listSelector: $("#list-selector"),
             loadListButton: $("#load-list-button"),
             guessableRulesDiv: $("#guessable-rules"),
-            clearListButton: $("#clear-list-button")
+            clearListButton: $("#clear-list-button"),
+            title: $('#title')
         };
 
         // ------------------------------------------------------------------------
@@ -655,6 +656,7 @@
             showSlide(0);
             dom.inputArea.hide();
             dom.generateButton.hide();
+            dom.title.hide();
             dom.slideshowContainer.show(); // Make the slideshow container visible
             dom.navigationButtons.show();
             dom.guessableRulesDiv.show(); // Show the rules div

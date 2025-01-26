@@ -42,7 +42,7 @@ body {
     display: none;
     /* flex-direction: column; */
     margin-bottom: 20px;
-    height: 70vh;
+    min-height: 70vh;
     /* Fixed height for the slideshow container */
 }
 
@@ -60,7 +60,7 @@ body {
     color: white;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
-    height: 70vh;
+    min-height: 70vh;
     /* Fixed height for the slide */
 }
 
@@ -211,7 +211,7 @@ body {
 
 /* Image Styles */
 .pixabay-image {
-    max-width: 80%;
+    max-width: 99%;
     max-height: 300px;
     object-fit: contain;
     border: 1px solid #ccc;
@@ -220,7 +220,7 @@ body {
 
 .image-placeholder {
     width: 300px;
-    height: 300px;
+    height: 200px;
     background-color: #eee;
     border: 1px dashed #999;
     color: #777;
@@ -277,16 +277,24 @@ body {
         padding: 10px;
     }
 
+    .english-word {
+        font-size: 1.5em;
+    }
+
+    .french-words p {
+        font-size: 1.5em;
+    }
+
     .slide {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        height: 500px;
+        min-height: 80vh;
         /* Adjusted height for smaller screens */
     }
 
     #slideshow-container {
-        height: 500px;
+        min-height: 80vh;
         /* Adjusted height for smaller screens */
     }
 
