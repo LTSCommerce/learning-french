@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>French Word Slideshow Generator</title>
+    <title>French Gendered Noun Learning Tool</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -12,148 +12,158 @@
 </head>
 
 <body>
-    <div id="container">
-        <h1 id="title">French Word Slideshow Generator</h1>
-        <div id="input-area">
-            <div id="load-list-area">
-                <label for="list-selector">Load Predefined List:</label>
-                <select id="list-selector" class="form-control" style="width: auto;">
-                    <!-- Options will be dynamically added here -->
-                </select>
-                <button id="load-list-button" class="btn btn-secondary">Load List</button>
-            </div>
+<div id="container">
+    <h1 id="title">French Gendered Noun Learning Tool</h1>
+    <div id="input-area">
+        <div id="load-list-area">
+            <label for="list-selector">Load Predefined List:</label>
+            <select id="list-selector" class="form-control" style="width: auto;">
+                <!-- Options will be dynamically added here -->
+            </select>
+            <button id="load-list-button" class="btn btn-secondary">Load List</button>
+        </div>
 
-            <label for="word-list">Enter English word, gender prefix, and French noun (one per line):</label>
-            <textarea id="word-list" class="form-control" rows="5" placeholder="Example:
+        <label for="word-list">Enter English word, gender prefix, and French noun (one per line):</label>
+        <textarea id="word-list" class="form-control" rows="5" placeholder="Example:
 dog le chien
 table la table
 man un homme
 woman une femme"></textarea>
 
-            <button id="clear-list-button" class="btn btn-warning btn-block">Clear List</button>
+        <button id="clear-list-button" class="btn btn-warning btn-block">Clear List</button>
+    </div>
+
+    <button id="generate-button" class="btn btn-primary btn-block">Generate Slideshow</button>
+
+    <div id="slideshow-container">
+        <!-- Slides will be dynamically added here -->
+    </div>
+
+    <div id="navigation-buttons">
+        <button id="prev-button" class="btn btn-secondary">Previous</button>
+        <button id="next-button" class="btn btn-secondary">Next</button>
+        <button id="shuffle-button" class="btn btn-secondary">Shuffle</button>
+        <button id="edit-button" class="btn btn-secondary">Edit List</button>
+    </div>
+
+    <div id="voice-pickers">
+        <h3>Voice Controls</h3>
+        <div id="auto-play">
+            <label for="auto-play-checkbox">Auto Play:</label>
+            <input type="checkbox" id="auto-play-checkbox">
         </div>
-
-        <button id="generate-button" class="btn btn-primary btn-block">Generate Slideshow</button>
-
-        <div id="slideshow-container">
-            <!-- Slides will be dynamically added here -->
+        <div id="male-voice-picker">
+            <label for="male-voice-select">Male Voice:</label>
+            <select id="male-voice-select" class="form-control"></select>
+            <button id="male-voice-play" class="btn btn-secondary">Play</button>
         </div>
-
-        <div id="navigation-buttons">
-            <button id="prev-button" class="btn btn-secondary">Previous</button>
-            <button id="next-button" class="btn btn-secondary">Next</button>
-            <button id="shuffle-button" class="btn btn-secondary">Shuffle</button>
-            <button id="edit-button" class="btn btn-secondary">Edit List</button>
+        <div id="female-voice-picker">
+            <label for="female-voice-select">Female Voice:</label>
+            <select id="female-voice-select" class="form-control"></select>
+            <button id="female-voice-play" class="btn btn-secondary">Play</button>
         </div>
+    </div>
 
-        <div id="voice-pickers">
-            <h3>Voice Controls</h3>
-            <div id="auto-play">
-                <label for="auto-play-checkbox">Auto Play:</label>
-                <input type="checkbox" id="auto-play-checkbox">
-            </div>
-            <div id="male-voice-picker">
-                <label for="male-voice-select">Male Voice:</label>
-                <select id="male-voice-select" class="form-control"></select>
-                <button id="male-voice-play" class="btn btn-secondary">Play</button>
-            </div>
-            <div id="female-voice-picker">
-                <label for="female-voice-select">Female Voice:</label>
-                <select id="female-voice-select" class="form-control"></select>
-                <button id="female-voice-play" class="btn btn-secondary">Play</button>
-            </div>
-        </div>
+    <div id="guessable-rules">
+        <p><b>Quick Gender Guessing Rule:</b></p>
+        <p>Most words ending in 'e' or 'ion' are feminine, except those ending in '-age', '-ege', '-é', or '-isme',
+            which are usually masculine. Most other endings are masculine.</p>
+        <p>For a more detailed explanation, see <a href="https://frenchtogether.com/french-nouns-gender/"
+                                                   target="_blank">French Noun Gender Rules</a>.</p>
+        <p>For even more information, you can also read <a
+                href="https://mangolanguages.com/resources/learn/grammar/french/how-to-determine-the-gender-of-nouns-in-french"
+                target="_blank">this page</a>.</p>
+    </div>
 
-        <div id="guessable-rules">
-            <p><b>Quick Gender Guessing Rule:</b></p>
-            <p>Most words ending in 'e' or 'ion' are feminine, except those ending in '-age', '-ege', '-é', or '-isme',
-                which are usually masculine. Most other endings are masculine.</p>
-            <p>For a more detailed explanation, see <a href="https://frenchtogether.com/french-nouns-gender/"
-                    target="_blank">French Noun Gender Rules</a>.</p>
-            <p>For even more information, you can also read <a
-                    href="https://mangolanguages.com/resources/learn/grammar/french/how-to-determine-the-gender-of-nouns-in-french"
-                    target="_blank">this page</a>.</p>
-        </div>
+    <div id="error-message">
+        <!-- Error messages will be displayed here -->
+    </div>
 
-        <div id="error-message">
-            <!-- Error messages will be displayed here -->
-        </div>
-
-        <div id="instructions">
-            <h1>Instructions</h1>
-            <p>
-            Copy and paste a list into the text area. You can load a predefined list by selecting in the drop down and then pressing load list.
+    <div id="instructions">
+        <h1>Instructions</h1>
+        <p>
+            Copy and paste a list into the text area. You can load a predefined list by selecting in the drop down and
+            then pressing load list.
         </p>
-<p>
+        <p>
             Alternatively, you can create your own list. For instructions to paste into chat GPT - see below
         </p>
-        <p>Press the "Generate Slideshow" button to start the slides. For each slide, you can click the ???? at the top to reveal the english word. Try to guess it before you do though!</p>
-        </div>
-        <div id="llm">
-            General Format:
+        <p>Press the "Generate Slideshow" button to start the slides. For each slide, you can click the ???? at the top
+            to reveal the english word. Try to guess it before you do though!</p>
+    </div>
+    <div id="llm">
+        General Format:
 
-    Each word or phrase should be provided in three columns:
+        Each word or phrase should be provided in three columns:
         English word/phrase: The English term or concept.
-        French gender prefix: The appropriate French article or gendered term, in its correct form (e.g., "le", "la", "un", "une", "les(m)", "les(f)").
+        French gender prefix: The appropriate French article or gendered term, in its correct form (e.g., "le", "la",
+        "un", "une", "les(m)", "les(f)").
         French word/phrase: The corresponding French noun or phrase.
 
-Gender Rules:
+        Gender Rules:
 
-    Masculine and Feminine Nouns:
+        Masculine and Feminine Nouns:
         For nouns that are both masculine and feminine (e.g., "minister"), provide separate lines:
-            Male version: Use the masculine article (e.g., "le ministre").
-            Female version: Use the feminine article (e.g., "la ministre").
+        Male version: Use the masculine article (e.g., "le ministre").
+        Female version: Use the feminine article (e.g., "la ministre").
         Example for a gendered noun:
-            "male minister" "le ministre"
-            "female minister" "la ministre"
-    Plurals: For plural nouns, the gender indicator must include the (m) or (f) suffix without any space:
+        "male minister" "le ministre"
+        "female minister" "la ministre"
+        Plurals: For plural nouns, the gender indicator must include the (m) or (f) suffix without any space:
         Example for plural noun:
-            "news" "les(f) nouvelles"
+        "news" "les(f) nouvelles"
 
-Additional Rules:
+        Additional Rules:
 
-    No contractions: Do not use contractions like "l'" for articles (e.g., "l'homme"). Always use "un" or "une" for singular nouns, and "les(m)" or "les(f)" for plural nouns.
+        No contractions: Do not use contractions like "l'" for articles (e.g., "l'homme"). Always use "un" or "une" for
+        singular nouns, and "les(m)" or "les(f)" for plural nouns.
         Example: Instead of "l'homme", use "un homme".
-    No extra spaces: Ensure there are no spaces between gender and noun for plurals (e.g., "les(f) nouvelles"), and no extra spaces in general.
-    Accuracy of Gender: Ensure the gender for each noun is accurately indicated (e.g., "un" for masculine, "une" for feminine).
+        No extra spaces: Ensure there are no spaces between gender and noun for plurals (e.g., "les(f) nouvelles"), and
+        no extra spaces in general.
+        Accuracy of Gender: Ensure the gender for each noun is accurately indicated (e.g., "un" for masculine, "une" for
+        feminine).
 
-Word Groupings:
+        Word Groupings:
 
-    Categories: Provide a list of related words in categories. Each category should be clearly labelled (e.g., # Politics, # News, # Economy). The categories should be relevant to the intended subject matter and should follow a logical order.
-    Example of categories:
+        Categories: Provide a list of related words in categories. Each category should be clearly labelled (e.g., #
+        Politics, # News, # Economy). The categories should be relevant to the intended subject matter and should follow
+        a logical order.
+        Example of categories:
         Politics
         News
         Economy
         Environment
         Social Issues
 
-Clarifications:
+        Clarifications:
 
-    Keep the structure simple and consistent. Each row should follow the format strictly, and the word list should be easy to parse and use without additional explanations or formatting.
-    No speech marks: Do not use speech marks around the words in the list.
+        Keep the structure simple and consistent. Each row should follow the format strictly, and the word list should
+        be easy to parse and use without additional explanations or formatting.
+        No speech marks: Do not use speech marks around the words in the list.
 
-This format ensures clarity and consistency for generating accurate French word lists, and is optimised for generating content based on specific language rules and structures.
+        This format ensures clarity and consistency for generating accurate French word lists, and is optimised for
+        generating content based on specific language rules and structures.
 
-Example output:
+        Example output:
 
-# Driving
-car une voiture  
-steering wheel un volant  
-seatbelt une ceinture de sécurité  
-gearbox une boîte de vitesses
+        # Driving
+        car une voiture
+        steering wheel un volant
+        seatbelt une ceinture de sécurité
+        gearbox une boîte de vitesses
 
-# Bank
-savings les(f) économies
+        # Bank
+        savings les(f) économies
 
-# Medical
-health la santé
-male doctor un médecin
-female doctor une médecin
+        # Medical
+        health la santé
+        male doctor un médecin
+        female doctor une médecin
 
-# Garage
-ladder	une	échelle
-        </div>
+        # Garage
+        ladder une échelle
     </div>
+</div>
 </body>
 
 </html>

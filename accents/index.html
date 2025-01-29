@@ -10,11 +10,12 @@
 <body>
 <div class="container">
     <h1>French Accent Learning Tool</h1>
-    <select id="list-selector" class="form-control">
-        <!-- Options will be populated dynamically -->
-    </select>
-    <button id="load-list-button" class="btn btn-secondary btn-block">Load List</button>
     <div id="input-area">
+        <select id="list-selector" class="form-control">
+            <!-- Options will be populated dynamically -->
+        </select>
+        <button id="load-list-button" class="btn btn-secondary btn-block">Load List</button>
+
         <label for="word-list">Enter French words with correct accents (one per line):</label>
         <textarea id="word-list" class="form-control" rows="5" placeholder="Example:
 élève
@@ -34,11 +35,22 @@ hôtel
     <div id="result-container">
         <!-- Results will be displayed here -->
     </div>
+    <div id="instructions">
+        <h1>Instructions</h1>
+        <p>
+            Copy and paste a list into the text area. You can load a predefined list by selecting in the drop down and
+            then pressing load list.
+        </p>
+        <p>Press the "Generate Slideshow" button to start the slides. For each slide, you can click on any letter of the
+            word and then choose an accented version. Once you think you have it correct, press submit to see how you
+            did.</p>
+    </div>
 </div>
 <div id="accent-popup" class="accent-popup" style="display: none;">
     <div id="accent-options"></div>
     <button id="close-popup" class="btn btn-secondary">Close</button>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="module" src="./code.js"></script>
 

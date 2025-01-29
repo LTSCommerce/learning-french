@@ -1,3 +1,5 @@
+@import url('../lib/wordButtons.css');
+
 body {
     padding: 20px;
 }
@@ -14,12 +16,15 @@ body {
     border-radius: 10px; /* Add rounded corners */
     margin-bottom: 20px;
     text-align: center;
-    font-size: 2em;
     min-height: 200px; /* Adjust this value as needed */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-.active-slide {
+.slide .letter{
+    font-size: 2em;
+}
+
+.slide.active {
     display: block;
 }
 
@@ -37,6 +42,7 @@ body {
     bottom: 10px;
     left: 10px;
     right: 10px;
+    font-size: 2em;
     background-color: #f9f9f9;
     padding: 10px;
     border: 1px solid #ddd;

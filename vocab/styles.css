@@ -1,3 +1,5 @@
+@import url('../lib/wordButtons.css');
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
@@ -94,6 +96,7 @@ body {
 .french-words button {
     margin-left: 10px;
 }
+
 /* Navigation Buttons Styles */
 #navigation-buttons {
     text-align: center;
@@ -105,22 +108,23 @@ body {
     margin-top: 10px;
 }
 
-#llm{
-    
-        font-family: "Courier New", Courier, monospace;  /* Monospaced font for preformatted text */
-        font-size: 0.8em;  /* Small font size */
-        white-space: pre-wrap;  /* Ensure preformatted text wraps correctly */
-        word-wrap: break-word;  /* Break long words to avoid overflow */
-        background-color: #f4f4f4;  /* Light background for better visibility */
-        padding: 10px;  /* Space around the text */
-        border: 1px solid #ccc;  /* Light border for visibility */
-        border-radius: 5px;  /* Rounded corners for a cleaner look */
-        overflow: auto;
-        user-select: text;  /* Allow users to select and copy the text */
-        height: 6em;
+#llm {
+
+    font-family: "Courier New", Courier, monospace; /* Monospaced font for preformatted text */
+    font-size: 0.8em; /* Small font size */
+    white-space: pre-wrap; /* Ensure preformatted text wraps correctly */
+    word-wrap: break-word; /* Break long words to avoid overflow */
+    background-color: #f4f4f4; /* Light background for better visibility */
+    padding: 10px; /* Space around the text */
+    border: 1px solid #ccc; /* Light border for visibility */
+    border-radius: 5px; /* Rounded corners for a cleaner look */
+    overflow: auto;
+    user-select: text; /* Allow users to select and copy the text */
+    height: 6em;
 }
 
 
+/* English Word Styles */
 /* English Word Styles */
 .english-word-container {
     position: relative;
@@ -128,6 +132,8 @@ body {
     cursor: pointer;
     user-select: none;
     margin: 10px;
+    max-width: 50%; /* Add max-width */
+    word-wrap: break-word; /* Ensure text wraps */
 }
 
 .english-word, .question-marks {
@@ -159,10 +165,15 @@ body {
     opacity: 0;
 }
 
-.englishWordExtra{
+.englishWordExtra {
     padding-left: 1em;
     font-style: italic;
-    color:white;
+    color: white;
+}
+
+/* French Words Styles */
+.french-words {
+    margin-top: 20px; /* Add margin for separation */
 }
 
 /* Guessable Rules Styles */
@@ -185,41 +196,6 @@ body {
     text-decoration: underline;
 }
 
-/* Slide Buttons Styles */
-.slide-buttons {
-    margin-top: 15px;
-    display: none;
-    /* Hide buttons by default */
-}
-
-.slide.active .slide-buttons {
-    display: block !important;
-    /* Override any other display rules */
-}
-
-.slide-buttons a {
-    display: inline-block;
-    padding: 6px 10px;
-    /* Reduced padding */
-    margin: 0 3px;
-    /* Reduced margin */
-    background-color: #ddd;
-    /* Light gray background */
-    color: #333;
-    /* Dark gray text */
-    text-decoration: none;
-    border-radius: 4px;
-    /* Slightly smaller border radius */
-    font-size: 0.9em;
-    /* Smaller font size */
-    border: none;
-    /* Removed border */
-}
-
-.slide-buttons a:hover {
-    background-color: #ccc;
-    /* Slightly darker gray on hover */
-}
 
 /* Image Styles */
 .pixabay-image {

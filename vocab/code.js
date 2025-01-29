@@ -1,6 +1,7 @@
 import {isCognate, isGuessable, levenshteinDistance, loadListFromFile} from '../lib/words.js';
 import {shuffleArray} from '../lib/arrays.js'
 import {getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem} from '../lib/localStorage.js'
+import {generateWordLinkButtons} from "../lib/content.js";
 
 (function () { // Start of IIFE
 
@@ -257,11 +258,6 @@ import {getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem} from '
             const englishWordDisplay = `<div class="english-word">${englishWord} <span class="englishWordExtra">${englishWordExtra}</span></div>`;
             const questionMarksDisplay = `<div class="question-marks">??????</div>`;
 
-            // Construct the URLs
-            const googleTranslateURL = `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate}`;
-            const wordReferenceURL = `https://www.wordreference.com/fren/${encodeURIComponent(frenchWord)}`;
-            const forvoURL = `https://forvo.com/word/${encodeURIComponent(frenchWord)}/#fr`;
-            const lingueeURL = `https://www.linguee.com/french-english/search?source=auto&query=${encodeURIComponent(frenchWord)}`;
 
             const frenchWords = isPlural
                 ? `<p>les ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="les ${frenchWord}">🔊</button></p>
@@ -277,8 +273,7 @@ import {getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem} from '
            <p>${prfxSome}${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxSome}${frenchWord}">🔊</button></p>`;
 
             const guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
-
-
+            const wordButtons = generateWordLinkButtons(frenchWord);
             return `
         <div class="text-container">
             <div class="english-word-container">
@@ -287,13 +282,8 @@ import {getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem} from '
             </div>
             <div class="french-words">${frenchWords}</div>
             <p>${guessableText} - <a href="#guessable-rules">Learn more</a></p>
-            <div class="slide-buttons">
-                <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
-                <a href="${wordReferenceURL}" target="_blank">WordReference</a>
-                <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
-                <a href="${lingueeURL}" target="_blank">Linguee</a>
-                <button class="delete-image-button" data-frenchword="${frenchWord}">Delete Image</button>
-            </div>
+            ${wordButtons}
+            
         </div>
         <div class="image-placeholder">?</div>
     `;
@@ -328,13 +318,13 @@ import {getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem} from '
             updateSlideWithPlaceholder(slide, "...");
 
 
-            let imageURL = getLocalStorageItem(localStorageKey,displayErrorMessage);
+            let imageURL = getLocalStorageItem(localStorageKey, displayErrorMessage);
             const imageBlacklist = getImageBlacklist();
 
             // Check if image is blacklisted
             if (imageURL && imageBlacklist.includes(imageURL)) {
                 console.warn("Image for", localStorageKey, "is blacklisted:", imageURL);
-                removeLocalStorageItem(localStorageKey,displayErrorMessage); // Remove blacklisted image from cache
+                removeLocalStorageItem(localStorageKey, displayErrorMessage); // Remove blacklisted image from cache
                 imageURL = null; // Force API call
             }
 
@@ -374,7 +364,7 @@ import {getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem} from '
 
                     if (validImageFound) {
                         console.log("Image found from Pixabay for", imageSearch, ":", imageURL);
-                        setLocalStorageItem(localStorageKey, imageURL,displayErrorMessage); // Save to local storage
+                        setLocalStorageItem(localStorageKey, imageURL, displayErrorMessage); // Save to local storage
                         updateSlideWithImage(slide, imageURL);
                     } else {
                         console.warn("No non-blacklisted images found on Pixabay for", imageSearch);
@@ -497,7 +487,7 @@ import {getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem} from '
 
 
             // Image Handling - Store English word for later loading
-            const slideContent = generateSlideContent(genderClass,englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxThis, prfxSome, frenchWord, guessable); // No image URL initially
+            const slideContent = generateSlideContent(genderClass, englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxThis, prfxSome, frenchWord, guessable); // No image URL initially
 
             const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}">${slideContent}</div>`);
 

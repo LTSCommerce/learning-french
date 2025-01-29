@@ -1,6 +1,7 @@
 // accents/code.js
 import {loadListFromFile} from '../lib/words.js';
 import {shuffleArray} from '../lib/arrays.js'
+import {generateWordLinkButtons} from "../lib/content.js";
 
 const config = {
     availableLists: ['common.txt'], // Add your list files here
@@ -8,6 +9,7 @@ const config = {
 };
 
 const dom = {
+    inputArea: $('#input-area'),
     listSelector: $('#list-selector'),
     loadListButton: $('#load-list-button'),
     wordListTextarea: $('#word-list'),
@@ -54,6 +56,7 @@ function displayErrorMessage(message) {
  */
 function toggleVisibility(showSlideshow) {
     if (showSlideshow) {
+        dom.inputArea.hide();
         dom.wordListTextarea.hide();
         dom.generateButton.hide();
         dom.loadListButton.hide();
@@ -63,6 +66,7 @@ function toggleVisibility(showSlideshow) {
         dom.nextButton.show();
         dom.submitButton.show();
     } else {
+        dom.inputArea.show();
         dom.wordListTextarea.show();
         dom.generateButton.show();
         dom.loadListButton.show();
@@ -161,6 +165,8 @@ $(document).ready(function () {
             word.withoutAccents.split('').forEach(letter => {
                 slide.append(`<span class="letter">${letter}</span>`);
             });
+            const buttons=generateWordLinkButtons(word);
+            slide.append(buttons);
             slide.attr('data-index', index);
             dom.slideshowContainer.append(slide);
         });
@@ -172,8 +178,8 @@ $(document).ready(function () {
      * @param {number} index - The index of the slide to show.
      */
     function showSlide(index) {
-        dom.slideshowContainer.find('.slide').removeClass('active-slide');
-        dom.slideshowContainer.find(`.slide[data-index=${index}]`).addClass('active-slide');
+        dom.slideshowContainer.find('.slide').removeClass('active');
+        dom.slideshowContainer.find(`.slide[data-index=${index}]`).addClass('active');
     }
 
     // Event handler for clicking on a letter
