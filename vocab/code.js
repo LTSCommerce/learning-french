@@ -1,3 +1,7 @@
+import {isCognate, isGuessable, levenshteinDistance, loadListFromFile} from '../lib/words.js';
+import {shuffleArray} from '../lib/arrays.js'
+import {getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem} from '../lib/localStorage.js'
+
 (function () { // Start of IIFE
 
     $(document).ready(async function () {
@@ -13,6 +17,7 @@
             availableLists: ["list1.txt", "adulting.txt", "home.txt"], // Hardcoded list of available files
             maxImageLoadFailures: 5,
             msBetweenWords: 200,
+            closenessThreshold: 3
         };
 
         // ------------------------------------------------------------------------
@@ -34,7 +39,11 @@
             loadListButton: $("#load-list-button"),
             guessableRulesDiv: $("#guessable-rules"),
             clearListButton: $("#clear-list-button"),
-            title: $('#title')
+            title: $('#title'),
+            maleVoiceSelect: $("#male-voice-select"),
+            maleVoicePlay: $("#male-voice-play"),
+            femaleVoicePlay: $("#female-voice-play"),
+            femaleVoiceSelect: $("#female-voice-select")
         };
 
         // ------------------------------------------------------------------------
@@ -57,7 +66,7 @@
                 femaleVoice: null
             },
             load() {
-                const storedConfig = getLocalStorageItem(this.key)
+                const storedConfig = getLocalStorageItem(this.key, displayErrorMessage)
                 console.log({storedConfig: storedConfig});
                 if (storedConfig) {
                     try {
@@ -84,7 +93,7 @@
                     } : null
                 };
                 console.log('saving to local storage:', configToSave);
-                setLocalStorageItem(this.key, JSON.stringify(configToSave))
+                setLocalStorageItem(this.key, JSON.stringify(configToSave), displayErrorMessage)
             }
         };
 
@@ -110,20 +119,19 @@
 
 // Populate voice pickers and set default voices from localConfig
         function populateVoicePickers(voices) {
-            const maleVoiceSelect = $("#male-voice-select");
-            const femaleVoiceSelect = $("#female-voice-select");
+
             console.log('voices', voices);
             voices.forEach(voice => {
                 console.log('adding voice to select', {voice: voice});
                 const option = `<option value="${voice.name}">${voice.name}</option>`;
-                maleVoiceSelect.append(option);
-                femaleVoiceSelect.append(option);
+                dom.maleVoiceSelect.append(option);
+                dom.femaleVoiceSelect.append(option);
             });
 
             // Set default voices from localConfig
             if (localConfig.data.maleVoice && localConfig.data.maleVoice.name) {
                 console.log('found local config for maleVoice', localConfig.data.maleVoice);
-                maleVoiceSelect.val(localConfig.data.maleVoice.name);
+                dom.maleVoiceSelect.val(localConfig.data.maleVoice.name);
                 maleVoice = voices.find(voice => voice.name === localConfig.data.maleVoice.name);
             } else {
                 let defaultMaleVoice = voices.find(voice => voice.name.includes("+male"));
@@ -133,7 +141,7 @@
                 }
                 if (defaultMaleVoice) {
                     console.log({defaultMaleVoice: defaultMaleVoice});
-                    maleVoiceSelect.val(defaultMaleVoice.name);
+                    dom.maleVoiceSelect.val(defaultMaleVoice.name);
                     maleVoice = defaultMaleVoice;
                     localConfig.data.maleVoice = defaultMaleVoice;
                 }
@@ -141,7 +149,7 @@
 
             if (localConfig.data.femaleVoice && localConfig.data.femaleVoice.name) {
                 console.log('found local config for femaleVoice', localConfig.data.femaleVoice);
-                femaleVoiceSelect.val(localConfig.data.femaleVoice.name);
+                dom.femaleVoiceSelect.val(localConfig.data.femaleVoice.name);
                 femaleVoice = voices.find(voice => voice.name === localConfig.data.femaleVoice.name);
             } else {
                 let defaultFemaleVoice = voices.find(voice => voice.name.includes("+female"));
@@ -150,7 +158,7 @@
                 }
                 if (defaultFemaleVoice) {
                     console.log({defaultFemaleVoice: defaultFemaleVoice})
-                    femaleVoiceSelect.val(defaultFemaleVoice.name);
+                    dom.femaleVoiceSelect.val(defaultFemaleVoice.name);
                     femaleVoice = defaultFemaleVoice;
                     localConfig.data.femaleVoice = defaultFemaleVoice;
                 }
@@ -205,40 +213,6 @@
             speak(allText, gender);
         }
 
-        // ------------------------------------------------------------------------
-        // Helper Functions - Local Storage
-        // ------------------------------------------------------------------------
-
-        // Function to get item from local storage with error handling
-        function getLocalStorageItem(key) {
-            try {
-                return localStorage.getItem(key);
-            } catch (e) {
-                console.error("Error accessing localStorage:", e);
-                displayErrorMessage("Error accessing local storage. See console for details.");
-                return null;
-            }
-        }
-
-        // Function to set item in local storage with error handling
-        function setLocalStorageItem(key, value) {
-            try {
-                localStorage.setItem(key, value);
-            } catch (e) {
-                console.error("Error setting localStorage:", e);
-                displayErrorMessage("Error saving to local storage. See console for details.");
-            }
-        }
-
-        // Function to remove item from local storage with error handling
-        function removeLocalStorageItem(key) {
-            try {
-                localStorage.removeItem(key);
-            } catch (e) {
-                console.error("Error removing from localStorage:", e);
-                displayErrorMessage("Error removing from local storage. See console for details.");
-            }
-        }
 
         // ------------------------------------------------------------------------
         // Helper Functions - Image Blacklist
@@ -246,13 +220,13 @@
 
         // Function to get the image blacklist from local storage
         function getImageBlacklist() {
-            const blacklistString = getLocalStorageItem(config.blacklistKey);
+            const blacklistString = getLocalStorageItem(config.blacklistKey, displayErrorMessage);
             return blacklistString ? JSON.parse(blacklistString) : [];
         }
 
         // Function to save the image blacklist to local storage
         function saveImageBlacklist(blacklist) {
-            setLocalStorageItem(config.blacklistKey, JSON.stringify(blacklist));
+            setLocalStorageItem(config.blacklistKey, JSON.stringify(blacklist), displayErrorMessage);
         }
 
         // ------------------------------------------------------------------------
@@ -263,122 +237,25 @@
             dom.errorMessage.text(message);
         }
 
-        // ------------------------------------------------------------------------
-        // Helper Functions - Gender Guessing
-        // ------------------------------------------------------------------------
-
-        // Function to determine if the gender is "guessable" based on the noun's ending
-        function isGuessable(frenchWord, prefix) {
-            const lowerCaseWord = frenchWord.toLowerCase();
-            let expectedGender = null;
-
-            if (lowerCaseWord.endsWith('e') || lowerCaseWord.endsWith('ion')) {
-                // Likely feminine, unless it's an exception
-                if (lowerCaseWord.endsWith('age') || lowerCaseWord.endsWith('ege') || lowerCaseWord.endsWith('é') || lowerCaseWord.endsWith('isme')) {
-                    expectedGender = 'masculine'; // Exception: Likely masculine
-                } else {
-                    expectedGender = 'feminine'; // Likely feminine
-                }
-            } else {
-                expectedGender = 'masculine'; // Likely masculine
-            }
-
-            // Determine actual gender from prefix
-            let actualGender = null;
-            if (["le", "un", "les(m)"].includes(prefix)) {
-                actualGender = 'masculine';
-            } else if (["la", "une", "les(f)"].includes(prefix)) {
-                actualGender = 'feminine';
-            } else {
-                console.warn("Unexpected prefix:", prefix); // Should not happen due to validation
-                return false; // Treat as not guessable
-            }
-
-            return expectedGender === actualGender; // Return true if guess matches actual
-        }
-
-        // ------------------------------------------------------------------------
-        // Helper Functions - Data Loading and Validation
-        // ------------------------------------------------------------------------
-
-        // Function to load list from file and validate
-        function loadListFromFile(filename) {
-            fetch(filename)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Failed to load file: ${filename} (status ${response.status})`);
-                    }
-                    return response.text();
-                })
-                .then(text => {
-                    if (!text) {
-                        displayErrorMessage(`File ${filename} is empty.`);
-                        console.warn(`File ${filename} is empty.`);
-                        return;
-                    }
-
-                    let validLines = [];
-                    const lines = text.split('\n');
-
-                    lines.forEach(line => {
-                        parsed = splitLine(line)
-                        if (parsed === null) {
-                            return;
-                        }
-                        validLines.push(line);
-                    });
-
-                    dom.wordListTextarea.val(validLines.join('\n')); // Replace existing content
-                    setLocalStorageItem(config.localStorageKey, dom.wordListTextarea.val()); // Update local storage
-
-                })
-                .catch(error => {
-                    displayErrorMessage(`Error loading list from ${filename}. See console for details.`);
-                    console.error("Error loading list:", error);
-                });
-        }
-
-        // ------------------------------------------------------------------------
-        // Helper Functions - Array Manipulation
-        // ------------------------------------------------------------------------
-
-        // Fisher-Yates shuffle algorithm
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
-            }
-        }
-
 
         // ------------------------------------------------------------------------
         // Helper Functions - Slide Generation
         // ------------------------------------------------------------------------
 
         // word comparison, checking for cognate
-        function isCognate(englishWord, frenchWord) {
-            // Normalize both strings by removing accents and converting to lowercase
-            let engNormal = englishWord
-                .replace(/^(male |female )/, '')
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase();
-
-            let frNormal = frenchWord
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase();
-
-            return engNormal === frNormal;
-        }
 
 
         // Function to generate the HTML content for a slide
-        function generateSlideContent(englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxThisthat, prfxSome, frenchWord, guessableText) {
-            let cognate = '';
+        function generateSlideContent(genderClass, englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxThisthat, prfxSome, frenchWord, guessable) {
+            let englishWordExtra = '';
             if (isCognate(englishWord, frenchWord)) {
-                cognate = ' cognate! ';
+                englishWordExtra = ' cognate! ';
+            } else if (isClose(englishWord, frenchWord)) {
+                englishWordExtra = ' close cousins! ';
             }
-            const englishWordDisplay = `<div class="english-word hidden" data-revealed="false">${englishWord} <span class="cognate">${cognate}</span></div>`;
+
+            const englishWordDisplay = `<div class="english-word">${englishWord} <span class="englishWordExtra">${englishWordExtra}</span></div>`;
+            const questionMarksDisplay = `<div class="question-marks">??????</div>`;
 
             // Construct the URLs
             const googleTranslateURL = `https://translate.google.co.uk/?sl=fr&tl=en&text=${encodeURIComponent(frenchWord)}&op=translate}`;
@@ -388,52 +265,58 @@
 
             const frenchWords = isPlural
                 ? `<p>les ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="les ${frenchWord}">🔊</button></p>
-                <p>tes ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="tes ${frenchWord}">🔊</button></p>
-                <p>mes ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="mes ${frenchWord}">🔊</button></p>
-                <p>ces ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="ces ${frenchWord}">🔊</button></p>
-                <p>des ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="des ${frenchWord}">🔊</button></p>`
+           <p>tes ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="tes ${frenchWord}">🔊</button></p>
+           <p>mes ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="mes ${frenchWord}">🔊</button></p>
+           <p>ces ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="ces ${frenchWord}">🔊</button></p>
+           <p>des ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="des ${frenchWord}">🔊</button></p>`
                 : `<p>${prfxOne} ${frenchWord}<button class="speak-button" data-gender="${genderClass}" data-text="${prfxOne} ${frenchWord}">🔊</button></p>
-                   <p>${wordWithDefiniteArticle} <button class="speak-button" data-gender="${genderClass}" data-text="${wordWithDefiniteArticle}">🔊</button></p>
-                   <p>${prfxYour} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxYour} ${frenchWord}">🔊</button></p>
-                   <p>${prfxMy} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxMy} ${frenchWord}">🔊</button></p>
-                   <p>${prfxThisthat} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxThisthat} ${frenchWord}">🔊</button></p>
-                   <p>${prfxSome}${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxSome}${frenchWord}">🔊</button></p>`;
+           <p>${wordWithDefiniteArticle} <button class="speak-button" data-gender="${genderClass}" data-text="${wordWithDefiniteArticle}">🔊</button></p>
+           <p>${prfxYour} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxYour} ${frenchWord}">🔊</button></p>
+           <p>${prfxMy} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxMy} ${frenchWord}">🔊</button></p>
+           <p>${prfxThisthat} ${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxThisthat} ${frenchWord}">🔊</button></p>
+           <p>${prfxSome}${frenchWord} <button class="speak-button" data-gender="${genderClass}" data-text="${prfxSome}${frenchWord}">🔊</button></p>`;
+
+            const guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
+
 
             return `
-    <div class="text-container">
-        <p><b style="font-size:1.2em">${englishWordDisplay}</b></p>
-        <div class="french-words">${frenchWords}</div>
-        <p>${guessableText} - <a href="#guessable-rules">Learn more</a></p>
-        <div class="slide-buttons">
-            <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
-            <a href="${wordReferenceURL}" target="_blank">WordReference</a>
-            <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
-            <a href="${lingueeURL}" target="_blank">Linguee</a>
-            <button class="delete-image-button" data-frenchword="${frenchWord}">Delete Image</button>
+        <div class="text-container">
+            <div class="english-word-container">
+                ${englishWordDisplay}
+                ${questionMarksDisplay}
+            </div>
+            <div class="french-words">${frenchWords}</div>
+            <p>${guessableText} - <a href="#guessable-rules">Learn more</a></p>
+            <div class="slide-buttons">
+                <a href="${googleTranslateURL}" target="_blank">Google Translate</a>
+                <a href="${wordReferenceURL}" target="_blank">WordReference</a>
+                <a href="${forvoURL}" target="_blank">Pronunciation (Forvo)</a>
+                <a href="${lingueeURL}" target="_blank">Linguee</a>
+                <button class="delete-image-button" data-frenchword="${frenchWord}">Delete Image</button>
+            </div>
         </div>
-    </div>
-    <div class="image-placeholder">?</div>
+        <div class="image-placeholder">?</div>
     `;
         }
 
         async function loadImageForSlide(slide) {
             if (!imageLoadingEnabled) {
-                console.warn("Image loading is disabled.  Skipping image load for slide.");
+                console.warn("Image loading is disabled. Skipping image load for slide.");
                 return;
             }
 
             const englishWord = slide.data("english-word");
-            const frenchWord = slide.find(".delete-image-button").data("frenchword"); // Extract frenchWord
-
+            const localStorageKey = englishWord;
+            const imageSearch = englishWord;
             if (!englishWord) {
-                console.warn("No English word found for slide.  Cannot load image.");
+                console.warn("No English word found for slide. Cannot load image.");
                 return;
             }
 
             // Abort any existing request
             let abortController = slide.data('abortController');
             if (abortController) {
-                console.log("Aborting previous image request for", englishWord);
+                console.log("Aborting previous image request for", imageSearch);
                 abortController.abort();
             }
 
@@ -444,27 +327,29 @@
             // Display "Loading image..." placeholder
             updateSlideWithPlaceholder(slide, "...");
 
-            let imageURL = getLocalStorageItem(frenchWord);
+
+            let imageURL = getLocalStorageItem(localStorageKey,displayErrorMessage);
             const imageBlacklist = getImageBlacklist();
 
             // Check if image is blacklisted
             if (imageURL && imageBlacklist.includes(imageURL)) {
-                console.warn("Image for", frenchWord, "is blacklisted:", imageURL);
-                removeLocalStorageItem(frenchWord); // Remove blacklisted image from cache
+                console.warn("Image for", localStorageKey, "is blacklisted:", imageURL);
+                removeLocalStorageItem(localStorageKey,displayErrorMessage); // Remove blacklisted image from cache
                 imageURL = null; // Force API call
             }
 
             if (imageURL) {
                 // Image found in local storage
-                console.log("Image found in local storage for", frenchWord, ":", imageURL);
+                console.log("Image found in local storage for", localStorageKey, ":", imageURL);
                 updateSlideWithImage(slide, imageURL);
                 return;
             }
 
             try {
-                console.log("Fetching image from Pixabay for", englishWord);
+
+                console.log("Fetching image from Pixabay for", imageSearch);
                 const response = await $.ajax({
-                    url: `https://pixabay.com/api/?key=${config.pixabayApiKey}&q=${encodeURIComponent(englishWord)}&image_type=photo`,
+                    url: `https://pixabay.com/api/?key=${config.pixabayApiKey}&q=${encodeURIComponent(imageSearch)}&image_type=photo`,
                     dataType: 'jsonp',
                     signal: signal // Pass the AbortSignal to the request
                 });
@@ -488,22 +373,22 @@
                     }
 
                     if (validImageFound) {
-                        console.log("Image found from Pixabay for", englishWord, ":", imageURL);
-                        setLocalStorageItem(frenchWord, imageURL); // Save to local storage
+                        console.log("Image found from Pixabay for", imageSearch, ":", imageURL);
+                        setLocalStorageItem(localStorageKey, imageURL,displayErrorMessage); // Save to local storage
                         updateSlideWithImage(slide, imageURL);
                     } else {
-                        console.warn("No non-blacklisted images found on Pixabay for", englishWord);
+                        console.warn("No non-blacklisted images found on Pixabay for", imageSearch);
                         updateSlideWithPlaceholder(slide, "No suitable image found");
                     }
                 } else {
-                    console.warn("No images found on Pixabay for", englishWord);
+                    console.warn("No images found on Pixabay for", imageSearch);
                     updateSlideWithPlaceholder(slide, "No image found");
                 }
             } catch (error) {
                 if (error.name === 'AbortError') {
-                    console.log("Image fetch aborted for", englishWord);
+                    console.log("Image fetch aborted for", imageSearch);
                 } else {
-                    console.error("Error fetching image for", englishWord, ":", error);
+                    console.error("Error fetching image for", imageSearch, ":", error);
                     imageLoadFailures++;
                     console.log("Image load failures:", imageLoadFailures);
 
@@ -562,13 +447,14 @@
 
         // Function to generate a single slide
         async function generateSlide(line) {
-            parsed = splitLine(line);
+            let parsed = splitLine(line);
             if (null === parsed) {
                 return null;
             }
             const englishWord = parsed.englishPhrase;
             const prefix = parsed.genderPrefix;
             const frenchWord = parsed.frenchPhrase;
+            let genderClass = '';
 
             if (["le", "un", "les(m)"].includes(prefix)) {
                 genderClass = 'masculine';
@@ -593,7 +479,6 @@
                 definiteArticle = `${definiteArticle} `; // add a space
             }
 
-
             const prfxYour = (genderClass === 'masculine') ? "ton" : "ta";
             const prfxMy = (genderClass === 'masculine') ? "mon" : "ma";
             const wordWithDefiniteArticle = definiteArticle + frenchWord;
@@ -606,17 +491,25 @@
                 : (startsWithVowelOrH ? "de l'" : "de la ")
 
             const guessable = isGuessable(frenchWord, prefix);
-            let guessableText = guessable ? "✅ Guessable" : "❌ Not Guessable";
+
+
+            // Check for closeness
+
 
             // Image Handling - Store English word for later loading
-            const slideContent = generateSlideContent(englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxThis, prfxSome, frenchWord, guessableText); // No image URL initially
+            const slideContent = generateSlideContent(genderClass,englishWord, isPlural, prfxOne, wordWithDefiniteArticle, prfxYour, prfxMy, prfxThis, prfxSome, frenchWord, guessable); // No image URL initially
 
-            const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}" data-ever-revealed="false">${slideContent}</div>`);
+            const slide = $(`<div class="slide ${genderClass}" data-english-word="${englishWord}">${slideContent}</div>`);
 
             // Initialize AbortController early
             slide.data('abortController', new AbortController());
 
             return slide;
+        }
+
+        function isClose(englishWord, frenchWord) {
+            const distance = levenshteinDistance(englishWord, frenchWord);
+            return distance <= config.closenessThreshold;
         }
 
         // ------------------------------------------------------------------------
@@ -679,14 +572,15 @@
             const currentSlide = slides[currentSlideIndex];
             currentSlide.addClass("active");
 
-            // Load image when slide becomes active, but only if the english word has been revealed
-            // or if it was ever revealed before
+            // Load image when slide becomes active, but only if the english word is revealed
             const englishWordSpan = currentSlide.find(".english-word");
-            const everRevealed = currentSlide.data("ever-revealed");
 
-            if (!englishWordSpan.hasClass("hidden") || everRevealed) {
+            if (englishWordSpan.hasClass("revealed")) {
                 loadImageForSlide(currentSlide);
+            } else {
+                updateSlideWithPlaceholder(currentSlide, "?");
             }
+
             // Check if auto-play is enabled and read out all French words
             if ($("#auto-play-checkbox").is(":checked")) {
                 autoPlaySlide(currentSlide);
@@ -738,22 +632,22 @@
         // Clear List Button Click
         dom.clearListButton.click(function () {
             dom.wordListTextarea.val("");
-            removeLocalStorageItem(config.localStorageKey);
+            removeLocalStorageItem(config.localStorageKey, displayErrorMessage);
         });
 
         // Save word list to local storage when the textarea changes
         dom.wordListTextarea.on('input', function () {
-            setLocalStorageItem(config.localStorageKey, dom.wordListTextarea.val());
+            setLocalStorageItem(config.localStorageKey, dom.wordListTextarea.val(), displayErrorMessage);
         });
 
         // Event delegation for dynamically added "Delete Image" buttons
         dom.slideshowContainer.on("click", ".delete-image-button", function () {
             const frenchWord = $(this).data("frenchword");
-            const imageURL = getLocalStorageItem(frenchWord); // Get URL before deleting
+            const imageURL = getLocalStorageItem(frenchWord, displayErrorMessage); // Get URL before deleting
 
             if (frenchWord) {
                 // Remove from local storage
-                removeLocalStorageItem(frenchWord);
+                removeLocalStorageItem(frenchWord, displayErrorMessage);
 
                 // Add to blacklist
                 const blacklist = getImageBlacklist();
@@ -772,32 +666,24 @@
         });
 
         // Interactive English Word Reveal - Single Click to Toggle
-        dom.slideshowContainer.on("click", ".english-word", function () {
+        dom.slideshowContainer.on("click", ".question-marks, .image-placeholder", function () {
             const $this = $(this);
-            const revealed = $this.data("revealed");
             const slide = $this.closest(".slide");
+            const englishWord = slide.find(".english-word");
+            const questionMarks = slide.find(".question-marks");
 
-            if (revealed) {
-                // Hide the word
-                $this.addClass("hidden");
-                $this.data("revealed", false);
-            } else {
-                // Show the word
-                $this.removeClass("hidden");
-                $this.data("revealed", true);
+            // Hide the question marks and show the real word
+            questionMarks.addClass("hidden");
+            englishWord.addClass("revealed");
 
-                // Set the "ever-revealed" flag to true
-                slide.data("ever-revealed", true);
-
-                // Load the image if it's the active slide
-                if (slide.hasClass("active")) {
-                    loadImageForSlide(slide);
-                }
+            // Load the image if the English word is revealed
+            if (slide.hasClass("active")) {
+                loadImageForSlide(slide);
             }
         });
 
         // Handle voice picker changes
-        $("#male-voice-select").change(function () {
+        dom.maleVoiceSelect.change(function () {
             const selectedVoiceName = $(this).val();
             maleVoice = voices.find(voice => voice.name === selectedVoiceName);
             if (femaleVoice === null) {
@@ -810,7 +696,7 @@
             playVoiceSample(maleVoice, 'masculine');
         });
 
-        $("#female-voice-select").change(function () {
+        dom.femaleVoiceSelect.change(function () {
             const selectedVoiceName = $(this).val();
             femaleVoice = voices.find(voice => voice.name === selectedVoiceName);
             if (femaleVoice === null) {
@@ -824,11 +710,11 @@
         });
 
         // Handle play button clicks
-        $("#male-voice-play").click(function () {
+        dom.maleVoicePlay.click(function () {
             playVoiceSample(maleVoice, 'masculine');
         });
 
-        $("#female-voice-play").click(function () {
+        dom.femaleVoicePlay.click(function () {
             playVoiceSample(femaleVoice, 'feminine');
         });
 
@@ -848,7 +734,7 @@
         // Load list on button click
         dom.loadListButton.click(function () {
             const selectedFile = dom.listSelector.val();
-            loadListFromFile("./lists/" + selectedFile);
+            loadListFromFile("./lists/" + selectedFile, dom.wordListTextarea, config.localStorageKey, displayErrorMessage);
         });
 
         // Load word list from local storage on page load

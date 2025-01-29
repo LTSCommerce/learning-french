@@ -1,0 +1,74 @@
+body {
+    padding: 20px;
+}
+
+#slideshow-container {
+    margin-top: 20px;
+}
+
+.slide {
+    display: none;
+    position: relative;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px; /* Add rounded corners */
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 2em;
+    min-height: 200px; /* Adjust this value as needed */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.active-slide {
+    display: block;
+}
+
+#result-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.letter {
+    cursor: pointer;
+}
+
+.result-message {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px; /* Add rounded corners */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.result-message div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.result-message div span {
+    flex: 1;
+    text-align: center;
+}
+
+#accent-popup {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px; /* Add rounded corners */
+    box-shadow: 0 10px 14px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    z-index: 1000;
+}
+
+.accent-option {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    border-radius: 10px; /* Add rounded corners */
+}

@@ -122,35 +122,47 @@ body {
 
 
 /* English Word Styles */
-.english-word {
+.english-word-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+    margin: 10px;
+}
+
+.english-word, .question-marks {
     font-size: 3em;
     font-weight: bold;
-    cursor: pointer;
-    /* Indicate it's clickable */
-    user-select: none;
-    /* Prevent text selection during double click */
+    position: absolute;
+    padding: 10px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease-in-out;
 }
 
-.english-word.hidden {
-    color: transparent;
-    /* Hide the text */
+.english-word {
+    display: none; /* Initially hidden */
+    opacity: 0;
 }
 
-.english-word.hidden::before {
-    content: "??????";
-    /* Placeholder - adjust length as needed */
-    color: rgba(255, 255, 255, 0.5);
-    /* Faded question marks */
+.english-word.revealed {
+    display: flex;
+    opacity: 1;
 }
 
-.cognate{
+.question-marks.hidden {
+    opacity: 0;
+}
+
+.englishWordExtra{
+    padding-left: 1em;
     font-style: italic;
     color:white;
-}
-
-.english-word.hidden > .cognate{
-    color: transparent;
-    /* Hide the text */
 }
 
 /* Guessable Rules Styles */
