@@ -35,6 +35,7 @@ body {
 
 .letter {
     cursor: pointer;
+    letter-spacing: normal;
 }
 
 .result-message {
@@ -77,4 +78,28 @@ body {
     padding: 10px 20px;
     font-size: 1.2em;
     border-radius: 10px; /* Add rounded corners */
+}
+
+.bg-grave {
+    background-color: #ff9957; /* à, è, ì, ò, ù */
+}
+
+.bg-acute {
+    background-color: #ffc56e; /* á, é, í, ó, ú */
+}
+
+.bg-circumflex {
+    background-color: #82b3fc; /* â, ê, î, ô, û */
+}
+
+.bg-umlaut {
+    background-color: #6dfd8d; /* ä, ë, ï, ö, ü */
+}
+
+.bg-tilde {
+    background-color: #6effdd; /* ã, õ, ñ */
+}
+
+.bg-cedilla {
+    background-color: #ff896e; /* ç */
 }

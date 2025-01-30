@@ -43,6 +43,24 @@ function getAccentedVariants(letter) {
 }
 
 /**
+ * Get a CSS class for a given accented letter.
+ * @param {string} letter - The letter to get the CSS class for.
+ * @returns {string|null} The CSS class name.
+ */
+function getBackgroundClass(letter) {
+    const classMap = {
+        'à': 'bg-grave', 'è': 'bg-grave', 'ì': 'bg-grave', 'ò': 'bg-grave', 'ù': 'bg-grave',
+        'á': 'bg-acute', 'é': 'bg-acute', 'í': 'bg-acute', 'ó': 'bg-acute', 'ú': 'bg-acute',
+        'â': 'bg-circumflex', 'ê': 'bg-circumflex', 'î': 'bg-circumflex', 'ô': 'bg-circumflex', 'û': 'bg-circumflex',
+        'ä': 'bg-umlaut', 'ë': 'bg-umlaut', 'ï': 'bg-umlaut', 'ö': 'bg-umlaut', 'ü': 'bg-umlaut',
+        'ã': 'bg-tilde', 'õ': 'bg-tilde', 'ñ': 'bg-tilde',
+        'ç': 'bg-cedilla'
+    };
+
+    return classMap[letter.toLowerCase()] || null;
+}
+
+/**
  * Display an error message.
  * @param {string} message - The error message to display.
  */
@@ -140,10 +158,18 @@ $(document).ready(function () {
         }).get().join('');
 
         const resultMessage = $('<div class="result-message"></div>');
-        const correctVersion = $('<div><span>Correct:</span><span>' + word.original + '</span></div>');
         const yourVersion = $('<div><span>Your Version:</span><span>' + userAnswer + '</span></div>');
 
-        resultMessage.append(correctVersion);
+        // Update the main word with correct accents and background class
+        currentSlideElement.find('.letter').each(function (index) {
+            const correctLetter = word.original[index];
+            const bgClass = getBackgroundClass(correctLetter);
+            $(this).text(correctLetter);
+            if (bgClass) {
+                $(this).addClass(bgClass);
+            }
+        });
+
         resultMessage.append(yourVersion);
 
         if (userAnswer === word.original) {
@@ -165,7 +191,7 @@ $(document).ready(function () {
             word.withoutAccents.split('').forEach(letter => {
                 slide.append(`<span class="letter">${letter}</span>`);
             });
-            const buttons=generateWordLinkButtons(word);
+            const buttons = generateWordLinkButtons(word);
             slide.append(buttons);
             slide.attr('data-index', index);
             dom.slideshowContainer.append(slide);
